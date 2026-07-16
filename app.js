@@ -13,8 +13,16 @@ const pageSections = document.getElementById("pageSections");
 const homeButton = document.getElementById("homeButton");
 const backButton = document.getElementById("backButton");
 const messageBox = document.getElementById("messageBox");
-
 let currentPageId = site.startPage;
+
+// =========================================
+// Application Defaults
+// =========================================
+
+const DEFAULT_COLUMNS = 8;
+const DEFAULT_IMAGE_FIT = "cover";
+const DEFAULT_HEADER_HEIGHT = "compact"; // later
+const DEFAULT_TILE_SHAPE = "square"; // later
 
 /*
   Starts the application.
@@ -99,7 +107,7 @@ function renderSection(section, defaultColumns) {
   const tileGrid = document.createElement("div");
   tileGrid.className = "tile-grid";
 
-  const columns = section.columns || defaultColumns || 4;
+  const columns = section.columns || defaultColumns || DEFAULT_COLUMNS;
   tileGrid.style.setProperty("--page-columns", columns);
 
   section.tiles.forEach((tile) => {

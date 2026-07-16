@@ -23,7 +23,7 @@ body {
 .site-header {
   position: relative;
   text-align: center;
-  padding: 90px 24px;
+  padding: 55px 24px;
   border-bottom: 1px solid var(--header-border);
 
   background-image:
@@ -34,27 +34,33 @@ body {
   background-position: center;
 }
 .site-header h1 {
+  position: relative;
   margin: 0;
   font-size: 4rem;
   font-weight: 700;
   color: #202124;
 }
-.header-button {
+.header-buttons {
   position: absolute;
-
   top: 24px;
-  right: 40px;
+  right: 32px;
 
-  width: auto;
+  display: flex;
+  gap: 12px;
+  z-index: 2;
+}
+
+.header-button {
+  width: 48px;
   height: 48px;
 
   border: none;
-  border-radius: 0;
+  border-radius: 50%;
 
-  background: transparent;
+  background: white;
   color: #202124;
 
-  font-size: 1.1rem;
+  font-size: 1.6rem;
   cursor: pointer;
 }
 .page-content {
@@ -80,7 +86,7 @@ body {
 
 .tile-grid {
   display: grid;
-  grid-template-columns: repeat(var(--page-columns, 4), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--page-columns, 8), minmax(0, 1fr));
   gap: 28px 24px;
 }
 
@@ -133,7 +139,7 @@ body {
   margin-top: 10px;
   padding: 0 6px;
 
-  font-size: 1.35rem;
+  font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.25;
 }

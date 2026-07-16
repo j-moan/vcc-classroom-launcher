@@ -6,8 +6,6 @@ window.CLASSROOM_SITE = {
       header: "Ms. Campbell's Classroom",
       subtitle: "Choose an activity",
       parent: null,
-      columns: 4,
-
       sections: [
         {
           heading: "",
@@ -47,8 +45,6 @@ window.CLASSROOM_SITE = {
       header: "Morning Meeting",
       subtitle: "Choose a morning activity",
       parent: "home",
-      columns: 4,
-
       sections: [
         {
           heading: "Songs and Activities",
@@ -73,21 +69,18 @@ window.CLASSROOM_SITE = {
     reading: {
       header: "Reading",
       parent: "home",
-      columns: 4,
       sections: [],
     },
 
     math: {
       header: "Math",
       parent: "home",
-      columns: 4,
       sections: [],
     },
 
     calendar: {
       header: "Calendar",
       parent: "morning-meeting",
-      columns: 4,
       sections: [],
     },
   },

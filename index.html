@@ -17,36 +17,15 @@
 
   <body>
     <header class="site-header">
-      <button
-        id="homeButton"
-        class="navigation-button home-button"
-        type="button"
-        aria-label="Return to the classroom home page"
-        hidden
-      >
-        <span aria-hidden="true">⌂</span>
-        <span>Home</span>
-      </button>
-
-      <button id="menuButton" class="header-button" type="button" aria-label="Open site navigation">
-        Home ▼
-      </button>
+      <div class="header-buttons">
+        <button id="homeButton" class="header-button" type="button" aria-label="Go Home">🏠</button>
+        <button id="backButton" class="header-button" type="button" aria-label="Go Back">↩</button>
+      </div>
 
       <div class="header-text">
         <h1 id="pageTitle">Campbell Classroom</h1>
         <p id="pageSubtitle" class="page-subtitle" hidden></p>
       </div>
-
-      <button
-        id="backButton"
-        class="navigation-button back-button"
-        type="button"
-        aria-label="Open site navigation"
-        hidden
-      >
-        <span aria-hidden="true">←</span>
-        <span>Back</span>
-      </button>
     </header>
 
     <main id="mainContent" class="page-content">
