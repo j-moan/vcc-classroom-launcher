@@ -3,7 +3,7 @@ window.CLASSROOM_SITE = {
 
   pages: {
     home: {
-      header: "Campbell Classroom",
+      header: "Ms. Campbell's Classroom",
       subtitle: "Choose an activity",
       parent: null,
       columns: 4,
@@ -13,10 +13,12 @@ window.CLASSROOM_SITE = {
           heading: "",
           tiles: [
             {
+              id: "morning-meeting",
               label: "Morning Meeting",
               image: "images/morning-meeting.jpg",
               type: "page",
               target: "morning-meeting",
+              enabled: true,
             },
             {
               label: "Reading",
