@@ -4,16 +4,21 @@
 
 ## Vision
 
-The VCC Classroom Editor is a visual content management application designed specifically for teachers.
+The VCC Classroom Editor is a visual classroom authoring tool designed specifically for teachers.
 
 The editor should feel familiar to anyone who has used:
 
 - Windows Explorer
 - Microsoft PowerPoint
 
-The editor should never feel like a website builder or programming tool.
+The editor should never feel like a website builder, programming tool, or file management application.
 
-Teachers should not need to understand HTML, JavaScript, JSON, Git, or file management.
+Teachers should never need to understand HTML, JavaScript, JSON, Git, or GitHub.
+
+The editor presents two coordinated views of the classroom:
+
+- The classroom navigation hierarchy
+- The selected page's visual layout
 
 ---
 
@@ -36,30 +41,41 @@ Most classroom changes should require only a few mouse clicks.
 # Main Window
 
 ```
-+-----------------------------------------------------------------------+
-| File  Edit  View  Publish  Preview  Help                              |
-+-------------------------+---------------------------------------------+
-| ▼ Home                  |  Reading                                    |
-|   ▶ Morning Meeting     |                                             |
-|   ▼ Reading             |  [🐻] Brown Bear                            |
-|      ▶ Books            |  [🐱] Pete the Cat                          |
-|      ▶ Sight Words      |  [📚] Dr. Seuss                             |
-|   ▶ Math                |                                             |
-|                         |  [+ Add Item]                               |
-+-------------------------+---------------------------------------------+
-| Properties                                                    Preview |
-+-----------------------------------------------------------------------+
++--------------------------------------------------------------------------------+
+| File  Edit  View  Publish  Preview  Help                                       |
++------------------------------+-------------------------------------------------+
+| Container Tree               | Layout                                          |
+|                              |                                                 |
+| ▼ Home                       | [Video]                                         |
+|   ▶ Morning Meeting          | [PDF]                                           |
+|   ▼ Reading                  | [Reading]                                       |
+|      ▶ Books                 | ------------------------------                  |
+|      ▶ Sight Words           | Morning Activities                              |
+|   ▶ Math                     | ------------------------------                  |
+|                              | [Information]                                   |
+|                              | [Math]                                          |
+|                              | [Video]                                         |
++------------------------------+-------------------------------------------------+
+| Properties                                                         Preview      |
++--------------------------------------------------------------------------------+
 ```
 
 ---
 
-# Left Panel
+# Container Tree
 
-The left panel displays the classroom hierarchy.
+The left panel displays the classroom navigation hierarchy.
 
-Only **Container** items appear in the tree.
+Each node in the tree represents a Container.
 
-The tree should support:
+The tree defines:
+
+- Page names
+- Parent-child relationships
+- Navigation hierarchy
+- Active / Disabled state
+
+The tree supports:
 
 - Expand
 - Collapse
@@ -67,67 +83,55 @@ The tree should support:
 - Drag and Drop
 - Right-click context menus
 
-Expanded state should be remembered between editing sessions.
+Disabled Containers remain visible so they can be re-enabled later.
+
+The selected Container determines the Layout displayed in the right panel.
 
 ---
 
-# Right Panel
+# Layout
 
-The right panel displays the contents of the selected container.
+The right panel displays the ordered Layout for the selected Container.
 
-Items should appear as visual tiles similar to the student interface.
+The Layout represents exactly what students will see when that page is displayed.
 
-The teacher edits what the students will actually see.
+The Layout may contain:
 
----
+- Navigation Entries
+- Content Entries
+- Sections
 
-# Properties Panel
+Teachers edit the Layout visually using drag and drop.
 
-Selecting an item displays its properties.
-
-Properties change based upon the selected item type.
-
-Examples:
-
-Container
-
-- Label
-- Image
-
-YouTube
-
-- Label
-- Image
-- YouTube URL
-
-Website
-
-- Label
-- Image
-- Website URL
-
-PowerPoint
-
-- Label
-- Image
-- Presentation File
-
-Information
-
-- Label
-- Image
-
-The editor should never expose internal IDs or file paths.
+The Layout order determines the rendering order in Student Mode.
 
 ---
 
-# Add Item
+# Navigation Entries
 
-Adding a new item should begin by selecting its type.
+Navigation Entries represent child Containers.
 
-Supported types:
+Navigation Entries are created automatically from the Container Tree.
 
-- Container
+Teachers cannot create or delete Navigation Entries directly.
+
+Teachers may:
+
+- Reorder Navigation Entries
+- Move Navigation Entries anywhere within the Layout
+- Rename the associated Container using the Container Tree
+- Enable or disable the associated Container
+
+When a Container is disabled, its Navigation Entry is hidden from Student Mode while remaining visible in Teacher Mode.
+
+---
+
+# Content Entries
+
+Teachers create Content Entries directly within the Layout.
+
+Supported Content Entry types include:
+
 - YouTube
 - Local Video
 - Website
@@ -136,62 +140,141 @@ Supported types:
 - Image
 - Information
 
-The editor then requests only the information required for that item type.
+Content Entries may be positioned anywhere within the Layout.
+
+---
+
+# Sections
+
+Sections divide the Layout into logical visual groups.
+
+Sections are rendered as full-width headings or separator lines.
+
+The next Layout Entry begins at the far left below the Section.
+
+Sections may be reordered like any other Layout Entry.
+
+---
+
+# Properties Panel
+
+Selecting an object displays its editable properties.
+
+Properties change based on the selected object type.
+
+Examples:
+
+Container
+
+- Name
+- Header image
+- Description
+- Active
+
+YouTube
+
+- Label
+- Thumbnail
+- YouTube URL
+
+Website
+
+- Label
+- Thumbnail
+- Website URL
+
+PDF
+
+- Label
+- Thumbnail
+- Document
+
+PowerPoint
+
+- Label
+- Thumbnail
+- Presentation
+
+Information
+
+- Label
+- Thumbnail
+
+Section
+
+- Title
+- Style (future)
+
+The editor should never expose internal identifiers or implementation details.
 
 ---
 
 # Drag and Drop
 
-The editor should support:
+The editor supports:
 
-- Reordering items
-- Moving items between containers
-- Dragging images onto tiles
-- Dragging files into the asset library
+- Reordering Layout Entries
+- Moving Content Entries between Containers
+- Moving Sections
+- Reordering Navigation Entries
+- Reordering Containers within the Container Tree
+- Dragging images onto entries
+- Dragging files into the Asset Library
 
-Future versions may support Ctrl+Drag to duplicate items.
+Future versions may support Ctrl+Drag to duplicate Content Entries.
 
 ---
 
 # Context Menu
 
-Right-clicking an item should display commands such as:
+Context menus should present only operations valid for the selected object.
 
-- Open
+Examples include:
+
+Container
+
 - Rename
+- Enable / Disable
+- Add Child Container
+- Delete
+- Move
+
+Content Entry
+
 - Duplicate
 - Delete
-- Activate
-- Deactivate
+- Move
+
+Section
+
+- Rename
+- Delete
 - Move
 
 ---
 
 # Asset Library
 
-The editor maintains a reusable library of assets.
+The editor maintains a reusable Asset Library.
 
-Examples:
+Examples include:
 
-Images
+- Images
+- Videos
+- Documents
+- PowerPoint Presentations
 
-Videos
+Assets may be reused by multiple Content Entries.
 
-Documents
-
-PowerPoint Presentations
-
-Assets can be reused by multiple classroom items.
-
-The teacher should never need to locate the same file twice.
+Teachers should never need to locate the same file twice.
 
 ---
 
 # Preview Mode
 
-The editor includes a Student Preview mode.
+The editor includes an integrated Student Preview.
 
-Preview displays the classroom exactly as students will experience it.
+Preview renders the currently selected Container exactly as students will experience it.
 
 Teachers should be able to switch instantly between editing and previewing.
 
@@ -212,17 +295,17 @@ Publishing should:
 - Commit changes to Git
 - Publish to GitHub Pages
 
-Publishing should never modify the live classroom until validation succeeds.
+Publishing never modifies the live classroom until validation succeeds.
 
 ---
 
 # Error Reporting
 
-Validation errors should clearly explain:
+Validation messages should clearly explain:
 
 - What is wrong
 - Why it is wrong
-- How to fix it
+- How to correct it
 
 Teachers should never receive technical error messages.
 
@@ -243,4 +326,5 @@ Possible future enhancements include:
 - Copy / Paste
 - Keyboard shortcuts
 - Multiple classroom projects
+- Theme support
 - Cloud asset synchronization

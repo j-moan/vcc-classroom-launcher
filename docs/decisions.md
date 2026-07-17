@@ -2,23 +2,25 @@
 
 # Design Decisions
 
-This document records significant architectural and design decisions made during the project.
+This document records significant architectural and product decisions made during the development of the VCC Classroom Launcher.
+
+Each decision captures **what** was decided, **why** it was chosen, and its current status.
 
 ---
 
 ## Decision 001
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
-Use a Single Page Application (SPA).
+Use a browser-based Single Page Application (SPA).
 
-**Reason**
+### Reason
 
-Provides fast navigation, no page reloads, and a smoother touchscreen experience.
+A Single Page Application provides fast navigation, eliminates page reloads, and delivers a smoother experience on classroom touch displays.
 
-**Status**
+### Status
 
 Accepted
 
@@ -26,17 +28,17 @@ Accepted
 
 ## Decision 002
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
 Host the application on GitHub Pages.
 
-**Reason**
+### Reason
 
-Provides free, reliable hosting with version control and a simple publishing workflow.
+GitHub Pages provides free hosting, version control, a simple publishing workflow, and requires no server-side infrastructure.
 
-**Status**
+### Status
 
 Accepted
 
@@ -44,17 +46,24 @@ Accepted
 
 ## Decision 003
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
-Use an Item-based data model rather than separate Page and Tile objects.
+Separate the application into two primary data models:
 
-**Reason**
+- Containers
+- Layout Entries
 
-A single Item model simplifies the architecture, editor, drag-and-drop, search, and future expansion. Container items represent pages while other item types perform actions.
+### Reason
 
-**Status**
+Containers represent classroom pages and define the navigation hierarchy.
+
+Layout Entries define the visual presentation of each page.
+
+Separating structure from presentation results in a simpler editor, cleaner rendering model, and more maintainable architecture.
+
+### Status
 
 Accepted
 
@@ -62,17 +71,19 @@ Accepted
 
 ## Decision 004
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
-Each item has exactly one parent.
+Represent classroom navigation as a Container Tree.
 
-**Reason**
+### Reason
 
-The classroom structure is a true hierarchy. A single-parent model greatly simplifies navigation, editing, and publishing.
+Every Container, except the root Container, has exactly one parent Container.
 
-**Status**
+This produces a true hierarchy that simplifies navigation, editing, publishing, and future expansion.
+
+### Status
 
 Accepted
 
@@ -80,17 +91,21 @@ Accepted
 
 ## Decision 005
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
-Teachers edit the project through a visual editor rather than directly modifying the data model.
+Each Container owns a single ordered Layout.
 
-**Reason**
+### Reason
 
-The target user is a classroom teacher, not a web developer. The editor should hide technical details such as JSON, file paths, Git, and HTML.
+The Layout defines exactly how the page is rendered.
 
-**Status**
+The rendering engine processes Layout Entries sequentially.
+
+Teacher Mode edits the Layout directly using drag-and-drop.
+
+### Status
 
 Accepted
 
@@ -98,17 +113,19 @@ Accepted
 
 ## Decision 006
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
-The student interface provides only Home and Back navigation.
+Navigation Entries are generated automatically from the Container Tree.
 
-**Reason**
+### Reason
 
-This keeps navigation predictable and minimizes cognitive load for students.
+Teachers manage navigation by editing the Container Tree rather than manually creating navigation tiles.
 
-**Status**
+Navigation Entries may be reordered within the Layout but cannot be created or deleted independently.
+
+### Status
 
 Accepted
 
@@ -116,16 +133,78 @@ Accepted
 
 ## Decision 007
 
-**Date:** 2026-07-16
+**Date:** 2026-07-17
 
-**Decision**
+### Decision
 
-Inactive content remains in the project but is not published to the classroom.
+Teacher Mode presents two coordinated editing views.
 
-**Reason**
+### Reason
 
-Teachers frequently prepare seasonal or future lessons in advance. Keeping inactive items allows them to be activated later without recreating them.
+The left panel edits the Container Tree.
 
-**Status**
+The right panel edits the Layout of the selected Container.
+
+This mirrors how teachers naturally think about organizing and designing classroom content.
+
+### Status
+
+Accepted
+
+---
+
+## Decision 008
+
+**Date:** 2026-07-17
+
+### Decision
+
+Student Mode provides only Home and Back navigation.
+
+### Reason
+
+Simple, consistent navigation minimizes cognitive load and is appropriate for young learners and special education classrooms.
+
+### Status
+
+Accepted
+
+---
+
+## Decision 009
+
+**Date:** 2026-07-17
+
+### Decision
+
+Containers may be enabled or disabled.
+
+### Reason
+
+Disabled Containers remain visible and editable in Teacher Mode.
+
+Disabled Containers and all of their descendants are hidden and inaccessible in Student Mode.
+
+This allows teachers to prepare future lessons without exposing unfinished content.
+
+### Status
+
+Accepted
+
+---
+
+## Decision 010
+
+**Date:** 2026-07-17
+
+### Decision
+
+Teachers edit projects through a visual editor rather than directly editing project files.
+
+### Reason
+
+The editor hides implementation details such as JSON, HTML, JavaScript, Git, and GitHub, allowing non-technical teachers to build and maintain classroom content confidently.
+
+### Status
 
 Accepted

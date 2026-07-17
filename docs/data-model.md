@@ -6,188 +6,219 @@
 
 The VCC Classroom Launcher is entirely data driven.
 
-Every object in the classroom is represented by a single Item.
+The application is built around four primary concepts:
 
-Items are organized into a hierarchy using parent-child relationships.
+- Project
+- Container Tree
+- Container
+- Layout
 
-Every item has exactly one parent.
+The Container Tree defines the navigation hierarchy.
 
-The Home item is the root of the hierarchy.
+Each Container represents one rendered classroom page.
 
----
+Each Container owns an ordered Layout that defines how the page is displayed.
 
-# Item Types
-
-The system currently supports the following item types.
-
-| Type        | Description                                 |
-| ----------- | ------------------------------------------- |
-| container   | Contains other items                        |
-| youtube     | Plays a YouTube video                       |
-| video       | Plays a local video                         |
-| website     | Opens a website                             |
-| pdf         | Opens a PDF document                        |
-| powerpoint  | Opens a PowerPoint presentation             |
-| image       | Displays an image                           |
-| information | Displays information but performs no action |
-
-Additional item types may be added in future versions.
+The rendering engine walks the Layout from beginning to end and renders each Layout Entry according to its type.
 
 ---
 
-# Common Properties
+# Project
 
-Every item contains the following properties.
+A Project represents a complete classroom.
 
-| Property | Required | Description                 |
-| -------- | -------- | --------------------------- |
-| id       | Yes      | Unique identifier           |
-| parent   | Yes      | Parent item identifier      |
-| label    | Yes      | Text shown beneath the tile |
-| image    | Yes      | Tile image                  |
-| type     | Yes      | Item type                   |
-| active   | No       | Defaults to true            |
+A Project contains:
 
----
+- Container Tree
+- Shared Assets (future)
+- Application Settings (future)
 
-# Container Item
-
-```javascript
-{
-    id: "reading",
-    parent: "home",
-    label: "Reading",
-    image: "images/reading.jpg",
-    type: "container"
-}
-```
+A project has exactly one root Container.
 
 ---
 
-# YouTube Item
+# Container Tree
 
-```javascript
-{
-    id: "hello-song",
-    parent: "morning-meeting",
-    label: "Hello Song",
-    image: "images/hello-song.jpg",
-    type: "youtube",
-    videoId: "abc123"
-}
-```
+The Container Tree defines the classroom navigation hierarchy.
 
----
+Every Container, except the root Container, has exactly one parent Container.
 
-# Local Video Item
+Containers may have zero or more child Containers.
 
-```javascript
-{
-    id: "counting-song",
-    parent: "math",
-    label: "Counting Song",
-    image: "images/counting.jpg",
-    type: "video",
-    file: "videos/counting.mp4"
-}
-```
+The Container Tree defines which classroom pages exist.
+
+It does not define how those pages are rendered.
 
 ---
 
-# Website Item
+# Container
 
-```javascript
-{
-    id: "starfall",
-    parent: "reading",
-    label: "Starfall",
-    image: "images/starfall.jpg",
-    type: "website",
-    url: "https://www.starfall.com"
-}
-```
+A Container represents one rendered classroom page.
 
----
+Examples include:
 
-# PDF Item
+- Home
+- Reading
+- Morning Meeting
+- Math
+- Science
 
-```javascript
-{
-    id: "rules",
-    parent: "classroom",
-    label: "Class Rules",
-    image: "images/rules.jpg",
-    type: "pdf",
-    file: "documents/rules.pdf"
-}
-```
+Each Container contains:
+
+- Metadata
+- Child Containers
+- Layout
+
+A Container may be enabled or disabled.
+
+Disabled Containers remain visible and editable in Teacher Mode.
+
+Disabled Containers and their descendants are inaccessible in Student Mode.
 
 ---
 
-# PowerPoint Item
+# Container Metadata
 
-```javascript
-{
-    id: "community-helpers",
-    parent: "social-studies",
-    label: "Community Helpers",
-    image: "images/community-helpers.jpg",
-    type: "powerpoint",
-    file: "presentations/community-helpers.pptx"
-}
-```
+Container metadata defines properties of the page itself.
 
----
+Examples include:
 
-# Image Item
+- Name
+- Header image
+- Description
+- Active
+- Layout settings (future)
 
-```javascript
-{
-    id: "butterfly",
-    parent: "science",
-    label: "Butterfly",
-    image: "images/butterfly.jpg",
-    type: "image",
-    file: "images/butterfly-large.jpg"
-}
-```
+Additional page-level properties may be added in future versions.
 
 ---
 
-# Information Item
+# Layout
 
-```javascript
-{
-    id: "todays-schedule",
-    parent: "home",
-    label: "Today's Schedule",
-    image: "images/schedule.jpg",
-    type: "information"
-}
-```
+A Layout is an ordered list of Layout Entries.
 
-Information items provide visual information only.
+The Layout determines exactly how a Container is rendered.
 
-Selecting an information item provides touch feedback but performs no navigation or launch action.
+The rendering engine processes Layout Entries from beginning to end.
+
+Layout order is independent of the Container Tree.
+
+Teacher Mode allows Layout Entries to be reordered using drag and drop.
 
 ---
 
-# Parent Relationships
+# Layout Entry Types
 
-Every item belongs to exactly one parent.
+The following Layout Entry types are currently planned.
 
-The resulting structure forms a tree.
+| Type        | Description                                       |
+| ----------- | ------------------------------------------------- |
+| Navigation  | Opens a child Container                           |
+| Section     | Displays a full-width section heading             |
+| YouTube     | Plays a YouTube video                             |
+| Video       | Plays a local video                               |
+| Website     | Opens a website                                   |
+| PDF         | Opens a PDF document                              |
+| PowerPoint  | Opens a PowerPoint presentation                   |
+| Image       | Displays an image                                 |
+| Information | Displays information without performing an action |
 
-```
-Home
-├── Morning Meeting
-│   ├── Hello Song
-│   └── Calendar
-├── Reading
-│   ├── Brown Bear
-│   └── Pete the Cat
-└── Math
-```
+Additional Layout Entry types may be added in future versions.
+
+---
+
+# Navigation Entries
+
+Navigation Entries represent child Containers.
+
+Navigation Entries are created automatically from the Container Tree.
+
+Teachers cannot manually create or delete Navigation Entries from the Layout.
+
+Teachers may:
+
+- Reorder Navigation Entries
+- Enable or disable the associated Container
+- Rename the associated Container through the Container Tree
+
+Navigation Entries may appear anywhere within the Layout.
+
+---
+
+# Sections
+
+Sections divide a page into visual groups.
+
+Sections are rendered as full-width headings or separator lines.
+
+The next Layout Entry begins at the far left below the Section.
+
+Sections exist only within the Layout.
+
+They do not participate in navigation.
+
+---
+
+# Content Entries
+
+Content Entries perform actions or display information.
+
+Current Content Entry types include:
+
+- YouTube
+- Video
+- Website
+- PDF
+- PowerPoint
+- Image
+- Information
+
+Every Content Entry belongs to exactly one Container through that Container's Layout.
+
+---
+
+# Rendering Model
+
+Rendering follows a simple process.
+
+1. Open the selected Container.
+2. Load the Container's Layout.
+3. Render each Layout Entry in order.
+
+Navigation Entries open child Containers.
+
+Content Entries perform their associated action.
+
+Sections organize the visual presentation of the page.
+
+---
+
+# Teacher Model
+
+Teacher Mode presents two coordinated views of the same Project.
+
+## Container Tree
+
+The left panel displays the Container Tree.
+
+Teachers manage:
+
+- Page hierarchy
+- Page names
+- Parent-child relationships
+- Active state
+
+## Layout
+
+The right panel displays the selected Container's Layout.
+
+Teachers manage:
+
+- Content Entries
+- Sections
+- Ordering of all Layout Entries
+
+Navigation Entries appear automatically based on the Container Tree.
 
 ---
 
@@ -200,9 +231,10 @@ Examples include:
 - Eight columns
 - Cover image scaling
 - Touch animation
-- Active = true
+- Default active state
+- Default tile styling
 
-Application defaults are defined in the application configuration rather than in individual items.
+Application defaults are defined globally rather than within individual Containers.
 
 ---
 
@@ -210,4 +242,13 @@ Application defaults are defined in the application configuration rather than in
 
 The data model is intentionally extensible.
 
-Future versions may introduce additional item types without changing the overall architecture.
+Future versions may introduce:
+
+- Additional Layout Entry types
+- Shared Asset Library
+- Page Templates
+- Search
+- Multiple Projects
+- Theme support
+
+The architecture is designed so these additions can be made without changing the fundamental Container Tree or Layout model.

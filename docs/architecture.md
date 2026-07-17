@@ -36,8 +36,8 @@ index.html
 app.js
     │
 Data Model
-    │
-Items
+    ├── Container Tree
+    └── Container Layouts
 ```
 
 The application loads once.
@@ -52,31 +52,47 @@ The VCC Classroom Launcher is built around two fundamental concepts:
 
 ## Containers
 
-Containers organize the classroom hierarchy.
+A Container represents a rendered classroom page.
 
-A container may contain zero or more Items.
+Containers form the navigation hierarchy. A Container may be the root page, a child of the root page, or a page nested several levels deep.
 
-Every container, except the root container, has exactly one parent container.
+Every Container, except the root Container, has exactly one parent Container.
+
+A Container may have:
+
+- zero or more child Containers
+- zero or more Items
+- zero or more Sections
+
+Each direct child Container is automatically represented on its parent page as a navigation tile.
+
+Navigation tiles may be positioned anywhere within the parent page's ordered layout. Their names and existence are controlled through the Container tree rather than through the page-content editor.
+
+A Container may be disabled. Disabled Containers remain visible and editable in Teacher Mode, but they and their descendants are not accessible in Student Mode.
 
 ## Items
 
-Every object displayed within the classroom is an Item.
+Items are tiles displayed on a Container page.
 
-Items are rendered according to their type.
+Items may perform actions such as:
 
-Examples include:
+- Play a YouTube or local video
+- Open a website
+- Open a PDF
+- Open a PowerPoint presentation
+- Display an image
+- Display information
+- Perform no action
 
-- Container
-- YouTube
-- Local Video
-- Website
-- PDF
-- PowerPoint
-- Image
-- Information
-- Section (future)
+Items belong to exactly one Container and may be positioned anywhere within that Container's ordered page layout.
 
-The rendering engine determines how each Item behaves based solely on its type.
+## Sections
+
+Sections are page-layout elements rather than tiles.
+
+A Section is rendered as a full-width line or heading. The next tile begins at the far left below the Section.
+
+Sections may be positioned anywhere within the ordered page layout.
 
 ---
 
@@ -139,15 +155,21 @@ Examples:
 
 # Navigation
 
-The application behaves as a hierarchical tree.
+Containers form a hierarchical navigation tree.
 
-Every item has exactly one parent.
+The root Container has no parent. Every other Container has exactly one parent Container.
 
-Navigation occurs by selecting container items.
+Each enabled child Container is automatically displayed on its parent page as a navigation tile.
 
-The Home button always returns to the root container.
+Selecting a navigation tile opens the associated child Container.
 
-The Back button returns to the parent container.
+The position of each navigation tile is controlled by the parent Container's ordered page layout.
+
+The Home button always returns to the root Container.
+
+The Back button returns to the parent Container.
+
+Disabled Containers remain visible in Teacher Mode but are hidden and inaccessible in Student Mode. Their descendants are also inaccessible.
 
 ---
 

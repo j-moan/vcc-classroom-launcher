@@ -1,87 +1,95 @@
 window.CLASSROOM_SITE = {
-  startPage: "home",
+  startContainer: "home",
 
-  pages: {
+  containers: {
     home: {
-      header: "Ms. Campbell's Classroom",
+      title: "Ms. Campbell's Classroom",
       subtitle: "Choose an activity",
       parent: null,
-      sections: [
+      active: true,
+
+      children: ["morning-meeting", "reading", "math"],
+
+      layout: [
         {
-          heading: "",
-          tiles: [
-            {
-              id: "morning-meeting",
-              label: "Morning Meeting",
-              image: "images/morning-meeting.jpg",
-              type: "page",
-              target: "morning-meeting",
-              enabled: true,
-            },
-            {
-              label: "Reading",
-              image: "images/reading.jpg",
-              type: "page",
-              target: "reading",
-            },
-            {
-              label: "Math",
-              image: "images/math.jpg",
-              type: "page",
-              target: "math",
-            },
-            {
-              label: "Movement",
-              image: "images/movement.jpg",
-              type: "video",
-              target: "M7lc1UVf-VE",
-            },
-          ],
+          type: "navigation",
+          container: "morning-meeting",
+          image: "images/morning-meeting.jpg",
+        },
+        {
+          type: "navigation",
+          container: "reading",
+          image: "images/reading.jpg",
+        },
+        {
+          type: "navigation",
+          container: "math",
+          image: "images/math.jpg",
+        },
+        {
+          type: "video",
+          label: "Movement",
+          image: "images/movement.jpg",
+          target: "M7lc1UVf-VE",
         },
       ],
     },
 
     "morning-meeting": {
-      header: "Morning Meeting",
+      title: "Morning Meeting",
       subtitle: "Choose a morning activity",
       parent: "home",
-      sections: [
+      active: true,
+
+      children: ["calendar"],
+
+      layout: [
         {
-          heading: "Songs and Activities",
-          tiles: [
-            {
-              label: "Hello Song",
-              image: "images/hello-song.jpg",
-              type: "video",
-              target: "M7lc1UVf-VE",
-            },
-            {
-              label: "Calendar",
-              image: "images/calendar.jpg",
-              type: "page",
-              target: "calendar",
-            },
-          ],
+          type: "section",
+          title: "Songs and Activities",
+        },
+        {
+          type: "video",
+          label: "Hello Song",
+          image: "images/hello-song.jpg",
+          target: "M7lc1UVf-VE",
+        },
+        {
+          type: "navigation",
+          container: "calendar",
+          image: "images/calendar.jpg",
         },
       ],
     },
 
     reading: {
-      header: "Reading",
+      title: "Reading",
       parent: "home",
-      sections: [],
+      active: true,
+
+      children: [],
+
+      layout: [],
     },
 
     math: {
-      header: "Math",
+      title: "Math",
       parent: "home",
-      sections: [],
+      active: true,
+
+      children: [],
+
+      layout: [],
     },
 
     calendar: {
-      header: "Calendar",
+      title: "Calendar",
       parent: "morning-meeting",
-      sections: [],
+      active: true,
+
+      children: [],
+
+      layout: [],
     },
   },
 };
