@@ -52,20 +52,104 @@
       </section>
 
       <footer class="teacher-toolbar">
-        <button class="teacher-tool-button" type="button">B1</button>
-        <button class="teacher-tool-button" type="button">B2</button>
-        <button class="teacher-tool-button" type="button">B3</button>
+        <!-- B1 - Add Subpage -->
+        <button id="add-subpage-button" class="teacher-tool-button" type="button">
+          Add Subpage
+        </button>
+
+        <!-- B2 - Rename Page -->
+        <button id="rename-page-button" class="teacher-tool-button" type="button">
+          Rename Page
+        </button>
+
+        <!-- B3 - Delete Page -->
+        <button id="delete-page-button" class="teacher-tool-button" type="button">
+          Delete Page
+        </button>
+
+        <!-- B4 - Add Section -->
         <button class="teacher-tool-button" type="button">B4</button>
+
+        <!-- B5 - Add Tile -->
         <button class="teacher-tool-button" type="button">B5</button>
+
+        <!-- B6 - Edit Tile -->
         <button class="teacher-tool-button" type="button">B6</button>
+
+        <!-- B7 - Delete Tile -->
         <button class="teacher-tool-button" type="button">B7</button>
+
+        <!-- B8 - Move Up -->
         <button class="teacher-tool-button" type="button">B8</button>
+
+        <!-- B9 - Move Down -->
         <button class="teacher-tool-button" type="button">B9</button>
+
+        <!-- B10 -->
         <button class="teacher-tool-button" type="button">B10</button>
+
+        <!-- B11 -->
         <button class="teacher-tool-button" type="button">B11</button>
+
+        <!-- B12 - Publish -->
         <button class="teacher-tool-button" type="button">B12</button>
       </footer>
     </main>
+
+    <dialog id="add-subpage-dialog" class="password-dialog" aria-labelledby="add-subpage-title">
+      <form id="add-subpage-form" class="password-form" method="dialog">
+        <h2 id="add-subpage-title" class="password-title">Add Subpage</h2>
+
+        <label for="subpage-name-input">Page Name:</label>
+
+        <input
+          id="subpage-name-input"
+          class="password-input"
+          type="text"
+          autocomplete="off"
+          required
+        />
+
+        <div class="password-actions">
+          <button
+            id="cancel-add-subpage-button"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button class="dialog-button dialog-button-primary" type="submit">Create</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="message-dialog" class="password-dialog" aria-labelledby="message-dialog-title">
+      <div class="password-form">
+        <h2 id="message-dialog-title" class="password-title">Message</h2>
+
+        <p id="message-dialog-text" class="teacher-message-text"></p>
+
+        <div class="password-actions">
+          <button
+            id="message-dialog-cancel-button"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+            hidden
+          >
+            Do Not Delete
+          </button>
+
+          <button
+            id="message-dialog-ok-button"
+            class="dialog-button dialog-button-primary"
+            type="button"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </dialog>
 
     <script src="data.js"></script>
     <script type="module" src="teacher.js"></script>

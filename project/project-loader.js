@@ -1,9 +1,10 @@
 "use strict";
 
 import { ProjectModel, ProjectModelError } from "../models/project-model.js";
+import { loadPublishedProjectData } from "./project-storage.js";
 
 export async function loadProject() {
-  const projectData = window.CLASSROOM_SITE;
+  const projectData = loadPublishedProjectData() ?? window.CLASSROOM_SITE;
 
   if (!projectData) {
     throw new ProjectLoadError("PROJECT_NOT_FOUND", "No classroom project data was found.");

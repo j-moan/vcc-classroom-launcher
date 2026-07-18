@@ -261,6 +261,68 @@ export class ProjectModel {
     });
   }
 
+  deleteContainer(containerId) {
+    if (containerId === this.startContainerId) {
+      throw new ProjectModelError(
+        "ROOT_CONTAINER_DELETE_NOT_ALLOWED",
+        "The Home page cannot be deleted.",
+      );
+    }
+
+    const container = this.#getContainerReference(containerId);
+
+    if (!container) {
+      throw new ProjectModelError(
+        "CONTAINER_NOT_FOUND",
+        `Container "${containerId}" does not exist.`,
+      );
+    }
+
+    if (Array.isArray(container.children) && container.children.length > 0) {
+      throw new ProjectModelError(
+        "CONTAINER_HAS_CHILDREN",
+        "This page cannot be deleted because it has subpages.",
+      );
+    }
+    const layout = Array.isArray(container.layout) ? container.layout : [];
+
+    if (layout.length > 0) {
+      throw new ProjectModelError(
+        "CONTAINER_NOT_EMPTY",
+        "This page cannot be deleted because it is not empty.",
+      );
+    }
+
+    const parentId = container.parent;
+    const parent = this.#getContainerReference(parentId);
+
+    if (!parent) {
+      throw new ProjectModelError(
+        "PARENT_CONTAINER_NOT_FOUND",
+        `The parent Container "${parentId}" does not exist.`,
+      );
+    }
+
+    if (Array.isArray(parent.children)) {
+      parent.children = parent.children.filter((childId) => childId !== containerId);
+    }
+
+    if (Array.isArray(parent.layout)) {
+      parent.layout = parent.layout.filter(
+        (entry) => !(entry.type === "navigation" && entry.container === containerId),
+      );
+    }
+
+    delete this.#data.containers[containerId];
+
+    this.#emit("containerDeleted", {
+      containerId,
+      parentId,
+    });
+
+    return parentId;
+  }
+
   // =========================================
   // Layout Access
   // =========================================
