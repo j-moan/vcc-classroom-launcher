@@ -249,7 +249,7 @@ The application currently consists of the following major layers.
 ```
 Browser
     │
-index.html
+student.html
     │
 Project Loader
     │
@@ -505,7 +505,7 @@ Each module performs one responsibility.
 
 ---
 
-## index.html
+## student.html
 
 Provides the permanent application shell.
 

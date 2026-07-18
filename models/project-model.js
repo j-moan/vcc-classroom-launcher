@@ -113,6 +113,10 @@ export class ProjectModel {
     return [...container.children];
   }
 
+  getContainerTree() {
+    return this.#buildContainerTree(this.startContainerId);
+  }
+
   // =========================================
   // Container State
   // =========================================
@@ -382,6 +386,23 @@ export class ProjectModel {
     }
 
     return this.#data.containers?.[containerId] || null;
+  }
+
+  #buildContainerTree(containerId) {
+    const container = this.#getContainerReference(containerId);
+
+    if (!container) {
+      return null;
+    }
+
+    return {
+      id: containerId,
+      title: container.title,
+      active: container.active !== false,
+      children: this.getChildIds(containerId)
+        .map((childId) => this.#buildContainerTree(childId))
+        .filter(Boolean),
+    };
   }
 }
 

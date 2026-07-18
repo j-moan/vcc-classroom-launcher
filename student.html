@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <meta
+      name="description"
+      content="Touch-friendly classroom activities and learning resources."
+    />
+
+    <title>VCC Classroom Launcher</title>
+
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:," />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="teacher-access-buttons">
+        <button
+          id="teacherButton"
+          class="header-button"
+          type="button"
+          aria-label="Open Teacher Mode"
+          hidden
+        >
+          📖
+        </button>
+      </div>
+
+      <div class="header-buttons">
+        <button id="homeButton" class="header-button" type="button" aria-label="Go Home">🏠</button>
+
+        <button id="backButton" class="header-button" type="button" aria-label="Go Back">↩</button>
+      </div>
+
+      <div class="header-text">
+        <h1 id="pageTitle">Campbell Classroom</h1>
+        <p id="pageSubtitle" class="page-subtitle" hidden></p>
+      </div>
+    </header>
+
+    <main id="mainContent" class="page-content">
+      <nav id="breadcrumb" class="breadcrumb" aria-label="Current page location" hidden></nav>
+
+      <div id="pageSections" class="page-sections" aria-live="polite" aria-busy="false"></div>
+
+      <noscript>
+        <div class="message-panel">
+          This classroom site requires JavaScript to display its activities.
+        </div>
+      </noscript>
+    </main>
+
+    <dialog
+      id="teacherPasswordDialog"
+      class="password-dialog"
+      aria-labelledby="teacherPasswordTitle"
+    >
+      <form id="teacherPasswordForm" class="password-form" method="dialog">
+        <h2 id="teacherPasswordTitle" class="password-title">Password:</h2>
+
+        <input
+          id="teacherPasswordInput"
+          class="password-input"
+          type="password"
+          autocomplete="off"
+          aria-label="Teacher Mode password"
+        />
+
+        <p
+          id="teacherPasswordFeedback"
+          class="password-feedback"
+          role="alert"
+          aria-live="assertive"
+          hidden
+        >
+          Password Incorrect
+        </p>
+
+        <div class="password-actions">
+          <button
+            id="cancelTeacherPasswordButton"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button class="dialog-button dialog-button-primary" type="submit">Enter</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div
+      id="videoModal"
+      class="video-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="videoTitle"
+      hidden
+    >
+      <div class="video-dialog">
+        <div class="video-header">
+          <h2 id="videoTitle" class="video-title">Video</h2>
+
+          <button
+            id="closeVideoButton"
+            class="close-video-button"
+            type="button"
+            aria-label="Close the video and return to the classroom page"
+          >
+            <span aria-hidden="true">✕</span>
+            <span>Close</span>
+          </button>
+        </div>
+
+        <div class="video-container">
+          <div id="youtubePlayer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="messageBox" class="message-box" role="alert" aria-live="assertive" hidden></div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="data.js"></script>
+    <script type="module" src="student.js"></script>
+  </body>
+</html>

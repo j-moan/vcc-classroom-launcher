@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <meta name="description" content="VCC Classroom Launcher Teacher Mode" />
+
+    <title>VCC Classroom Launcher - Teacher Mode</title>
+
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:," />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="teacher-access-buttons">
+        <button
+          id="publish-button"
+          class="publish-button"
+          type="button"
+          aria-label="Publish and Return to Student View"
+        >
+          Publish
+        </button>
+      </div>
+
+      <div class="header-text">
+        <h1 id="pageTitle">Campbell Classroom</h1>
+        <p id="pageSubtitle" class="page-subtitle" hidden></p>
+      </div>
+    </header>
+
+    <main class="teacher-page">
+      <section class="teacher-workspace">
+        <aside class="teacher-tree-panel" aria-label="Container Tree">
+          <h2 class="teacher-panel-title">Pages</h2>
+
+          <div id="containerTree" class="teacher-panel-content teacher-tree">
+            <!-- Container tree is rendered by teacher.js -->
+          </div>
+        </aside>
+
+        <section class="teacher-page-panel" aria-label="Page Tile Management">
+          <h2 class="teacher-panel-title">Page Tiles</h2>
+
+          <div class="teacher-panel-content">
+            <!-- Tile management will go here -->
+          </div>
+        </section>
+      </section>
+
+      <footer class="teacher-toolbar">
+        <button class="teacher-tool-button" type="button">B1</button>
+        <button class="teacher-tool-button" type="button">B2</button>
+        <button class="teacher-tool-button" type="button">B3</button>
+        <button class="teacher-tool-button" type="button">B4</button>
+        <button class="teacher-tool-button" type="button">B5</button>
+        <button class="teacher-tool-button" type="button">B6</button>
+        <button class="teacher-tool-button" type="button">B7</button>
+        <button class="teacher-tool-button" type="button">B8</button>
+        <button class="teacher-tool-button" type="button">B9</button>
+        <button class="teacher-tool-button" type="button">B10</button>
+        <button class="teacher-tool-button" type="button">B11</button>
+        <button class="teacher-tool-button" type="button">B12</button>
+      </footer>
+    </main>
+
+    <script src="data.js"></script>
+    <script type="module" src="teacher.js"></script>
+  </body>
+</html>

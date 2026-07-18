@@ -5,21 +5,32 @@ import { validateProject } from "./validators/project-validator.js";
 import { validateAssets } from "./validators/asset-validator.js";
 import { loadProject, ProjectLoadError } from "./project/project-loader.js";
 
-let project = null;
-
+const TEACHER_PASSWORD = "class";
 const DEFAULT_COLUMNS = 8;
+const PASSWORD_ERROR_DURATION = 1000;
+
+let project = null;
+let currentContainerId = null;
+let messageTimerId = null;
+let passwordErrorTimerId = null;
 
 const elements = {
   pageTitle: document.getElementById("pageTitle"),
   pageSubtitle: document.getElementById("pageSubtitle"),
   pageSections: document.getElementById("pageSections"),
+
   homeButton: document.getElementById("homeButton"),
   backButton: document.getElementById("backButton"),
+  teacherButton: document.getElementById("teacherButton"),
+
+  teacherPasswordDialog: document.getElementById("teacherPasswordDialog"),
+  teacherPasswordForm: document.getElementById("teacherPasswordForm"),
+  teacherPasswordInput: document.getElementById("teacherPasswordInput"),
+  teacherPasswordFeedback: document.getElementById("teacherPasswordFeedback"),
+  cancelTeacherPasswordButton: document.getElementById("cancelTeacherPasswordButton"),
+
   messageBox: document.getElementById("messageBox"),
 };
-
-let currentContainerId = null;
-let messageTimerId = null;
 
 async function initialize() {
   try {
@@ -148,6 +159,7 @@ function updateHeader(container) {
 function updateNavigationButtons(container) {
   const isHome = currentContainerId === project.startContainerId;
 
+  elements.teacherButton.hidden = !isHome;
   elements.homeButton.hidden = isHome;
   elements.backButton.hidden = isHome || !container.parent;
 }
@@ -165,6 +177,87 @@ function navigateBack() {
     navigateToContainer(currentContainer.parent);
   }
 }
+
+/* =========================================================
+   Teacher Mode authentication
+   ========================================================= */
+
+function openTeacherPasswordDialog() {
+  clearPasswordErrorTimer();
+  resetTeacherPasswordDialog();
+
+  elements.teacherPasswordDialog.showModal();
+
+  window.requestAnimationFrame(() => {
+    elements.teacherPasswordInput.focus();
+  });
+}
+
+function closeTeacherPasswordDialog() {
+  clearPasswordErrorTimer();
+  resetTeacherPasswordDialog();
+
+  if (elements.teacherPasswordDialog.open) {
+    elements.teacherPasswordDialog.close();
+  }
+}
+
+function submitTeacherPassword(event) {
+  event.preventDefault();
+
+  const enteredPassword = elements.teacherPasswordInput.value.trim();
+
+  const passwordMatches =
+    enteredPassword.toLocaleLowerCase() === TEACHER_PASSWORD.toLocaleLowerCase();
+
+  if (passwordMatches) {
+    window.location.href = "teacher.html";
+    return;
+  }
+
+  showIncorrectPassword();
+}
+
+function showIncorrectPassword() {
+  clearPasswordErrorTimer();
+
+  elements.teacherPasswordForm.classList.add("password-error");
+  elements.teacherPasswordFeedback.hidden = false;
+  elements.teacherPasswordInput.value = "";
+  elements.teacherPasswordInput.disabled = true;
+
+  passwordErrorTimerId = window.setTimeout(() => {
+    passwordErrorTimerId = null;
+
+    resetTeacherPasswordDialog();
+
+    if (elements.teacherPasswordDialog.open) {
+      elements.teacherPasswordDialog.close();
+    }
+
+    navigateHome();
+  }, PASSWORD_ERROR_DURATION);
+}
+
+function resetTeacherPasswordDialog() {
+  elements.teacherPasswordForm.classList.remove("password-error");
+  elements.teacherPasswordFeedback.hidden = true;
+  elements.teacherPasswordInput.disabled = false;
+  elements.teacherPasswordInput.value = "";
+}
+
+function clearPasswordErrorTimer() {
+  if (!passwordErrorTimerId) {
+    return;
+  }
+
+  window.clearTimeout(passwordErrorTimerId);
+  passwordErrorTimerId = null;
+}
+
+/* =========================================================
+   Content actions
+   ========================================================= */
 
 function handleContentAction(entry) {
   switch (entry.type) {
@@ -215,5 +308,16 @@ function showMessage(message) {
 
 elements.homeButton.addEventListener("click", navigateHome);
 elements.backButton.addEventListener("click", navigateBack);
+
+elements.teacherButton.addEventListener("click", openTeacherPasswordDialog);
+
+elements.teacherPasswordForm.addEventListener("submit", submitTeacherPassword);
+
+elements.cancelTeacherPasswordButton.addEventListener("click", closeTeacherPasswordDialog);
+
+elements.teacherPasswordDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeTeacherPasswordDialog();
+});
 
 void initialize();
