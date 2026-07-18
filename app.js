@@ -3,8 +3,9 @@
 import { renderLayout } from "./renderers/layout-renderer.js";
 import { validateProject } from "./validators/project-validator.js";
 import { validateAssets } from "./validators/asset-validator.js";
+import { loadProject, ProjectLoadError } from "./loaders/project-loader.js";
 
-const site = window.CLASSROOM_SITE;
+let project = null;
 
 const DEFAULT_COLUMNS = 8;
 
@@ -21,7 +22,15 @@ let currentContainerId = null;
 let messageTimerId = null;
 
 async function initialize() {
-  const projectValidation = validateProject(site);
+  try {
+    project = await loadProject();
+  } catch (error) {
+    handleProjectLoadFailure(error);
+    return;
+  }
+
+  const projectData = project.toObject();
+  const projectValidation = validateProject(projectData);
 
   reportValidation(projectValidation);
 
@@ -38,10 +47,9 @@ async function initialize() {
     return;
   }
 
-  // Render immediately. Missing assets should not delay Student Mode.
-  navigateToContainer(site.startContainer);
+  navigateToContainer(project.startContainerId);
 
-  const assetValidation = await validateAssets(site);
+  const assetValidation = await validateAssets(projectData);
   reportAssetValidation(assetValidation);
 }
 
@@ -138,14 +146,16 @@ function updateHeader(container) {
 }
 
 function updateNavigationButtons(container) {
-  const isHome = currentContainerId === site.startContainer;
+  const isHome = currentContainerId === project.startContainerId;
 
   elements.homeButton.hidden = isHome;
   elements.backButton.hidden = isHome || !container.parent;
 }
 
 function navigateHome() {
-  navigateToContainer(site.startContainer);
+  if (project?.startContainerId) {
+    navigateToContainer(project.startContainerId);
+  }
 }
 
 function navigateBack() {
@@ -182,32 +192,11 @@ function getEntryLabel(entry) {
 }
 
 function getContainer(containerId) {
-  return site.containers[containerId] || null;
+  return project?.getContainer(containerId) || null;
 }
 
 function isContainerAccessible(containerId) {
-  let container = getContainer(containerId);
-  const visited = new Set();
-
-  while (container) {
-    if (container.active === false) {
-      return false;
-    }
-
-    if (!container.parent) {
-      return true;
-    }
-
-    if (visited.has(container.parent)) {
-      console.error("A circular Container relationship was detected.");
-      return false;
-    }
-
-    visited.add(container.parent);
-    container = getContainer(container.parent);
-  }
-
-  return false;
+  return project?.isContainerAccessible(containerId) || false;
 }
 
 function showMessage(message) {

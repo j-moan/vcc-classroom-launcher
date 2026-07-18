@@ -2,23 +2,41 @@
 
 # Editor Design
 
-## Vision
+**Version:** 2.0 (Draft)
 
-The VCC Classroom Editor is a visual classroom authoring tool designed specifically for teachers.
+**Status:** Current
+
+**Last Updated:** July 2026
+
+---
+
+# Purpose
+
+The VCC Classroom Editor is the visual authoring environment used to create and maintain classroom Projects.
+
+Teacher Mode allows educators to build classroom experiences without requiring knowledge of programming, HTML, JSON, Git, or GitHub.
+
+The editor is responsible for editing a Project Model.
+
+The runtime is responsible for presenting that Project to students.
+
+---
+
+# Vision
 
 The editor should feel familiar to anyone who has used:
 
 - Windows Explorer
 - Microsoft PowerPoint
 
-The editor should never feel like a website builder, programming tool, or file management application.
+The editor should never feel like:
 
-Teachers should never need to understand HTML, JavaScript, JSON, Git, or GitHub.
+- A website builder
+- A programming environment
+- A file management utility
+- A development tool
 
-The editor presents two coordinated views of the classroom:
-
-- The classroom navigation hierarchy
-- The selected page's visual layout
+Teachers should focus entirely on classroom organization and content.
 
 ---
 
@@ -38,6 +56,29 @@ Most classroom changes should require only a few mouse clicks.
 
 ---
 
+# Project Model
+
+Teacher Mode edits a Project through the Project Model.
+
+The editor never edits serialized project data directly.
+
+Typical operations include:
+
+- Create Container
+- Rename Container
+- Move Container
+- Enable Container
+- Disable Container
+- Add Layout Entry
+- Remove Layout Entry
+- Move Layout Entry
+- Edit Properties
+- Import Assets
+
+The Project Model is responsible for maintaining project integrity.
+
+---
+
 # Main Window
 
 ```
@@ -46,19 +87,20 @@ Most classroom changes should require only a few mouse clicks.
 +------------------------------+-------------------------------------------------+
 | Container Tree               | Layout                                          |
 |                              |                                                 |
-| ▼ Home                       | [Video]                                         |
-|   ▶ Morning Meeting          | [PDF]                                           |
-|   ▼ Reading                  | [Reading]                                       |
-|      ▶ Books                 | ------------------------------                  |
-|      ▶ Sight Words           | Morning Activities                              |
-|   ▶ Math                     | ------------------------------                  |
+| ▼ Home                       | [Reading]                                       |
+|   ▶ Morning Meeting          | [Video]                                         |
+|   ▼ Reading                  | ------------------------------                  |
+|      ▶ Books                 | Morning Activities                              |
+|      ▶ Sight Words           | ------------------------------                  |
+|   ▶ Math                     | [Website]                                       |
+|                              | [PDF]                                           |
 |                              | [Information]                                   |
-|                              | [Math]                                          |
-|                              | [Video]                                         |
 +------------------------------+-------------------------------------------------+
 | Properties                                                         Preview      |
 +--------------------------------------------------------------------------------+
 ```
+
+The editor presents two coordinated views of the same Project.
 
 ---
 
@@ -66,16 +108,16 @@ Most classroom changes should require only a few mouse clicks.
 
 The left panel displays the classroom navigation hierarchy.
 
-Each node in the tree represents a Container.
+Each node represents one Container.
 
-The tree defines:
+Teachers manage:
 
-- Page names
+- Container names
 - Parent-child relationships
+- Active state
 - Navigation hierarchy
-- Active / Disabled state
 
-The tree supports:
+Supported operations include:
 
 - Expand
 - Collapse
@@ -83,17 +125,17 @@ The tree supports:
 - Drag and Drop
 - Right-click context menus
 
-Disabled Containers remain visible so they can be re-enabled later.
+Disabled Containers remain visible so they may be re-enabled later.
 
-The selected Container determines the Layout displayed in the right panel.
+Selecting a Container displays its Layout.
 
 ---
 
 # Layout
 
-The right panel displays the ordered Layout for the selected Container.
+The right panel displays the selected Container's Layout.
 
-The Layout represents exactly what students will see when that page is displayed.
+The Layout represents exactly what students will experience when viewing that Container.
 
 The Layout may contain:
 
@@ -101,28 +143,28 @@ The Layout may contain:
 - Content Entries
 - Sections
 
-Teachers edit the Layout visually using drag and drop.
+Teachers edit the Layout using drag-and-drop.
 
-The Layout order determines the rendering order in Student Mode.
+Layout order determines rendering order.
 
 ---
 
 # Navigation Entries
 
-Navigation Entries represent child Containers.
+Navigation Entries are generated automatically from the Container hierarchy.
 
-Navigation Entries are created automatically from the Container Tree.
-
-Teachers cannot create or delete Navigation Entries directly.
+Teachers do not manually create or delete Navigation Entries.
 
 Teachers may:
 
 - Reorder Navigation Entries
-- Move Navigation Entries anywhere within the Layout
-- Rename the associated Container using the Container Tree
-- Enable or disable the associated Container
+- Position Navigation Entries anywhere within the Layout
+- Rename the referenced Container
+- Enable or disable the referenced Container
 
-When a Container is disabled, its Navigation Entry is hidden from Student Mode while remaining visible in Teacher Mode.
+Navigation Entry labels are automatically obtained from the referenced Container.
+
+Navigation Entries always reference direct child Containers.
 
 ---
 
@@ -130,15 +172,16 @@ When a Container is disabled, its Navigation Entry is hidden from Student Mode w
 
 Teachers create Content Entries directly within the Layout.
 
-Supported Content Entry types include:
+Current Content Entry types include:
 
-- YouTube
-- Local Video
+- Video
 - Website
 - PDF
 - PowerPoint
 - Image
 - Information
+
+Additional Content Entry types may be introduced without changing the editor architecture.
 
 Content Entries may be positioned anywhere within the Layout.
 
@@ -148,9 +191,14 @@ Content Entries may be positioned anywhere within the Layout.
 
 Sections divide the Layout into logical visual groups.
 
-Sections are rendered as full-width headings or separator lines.
+Sections are Layout Entries.
 
-The next Layout Entry begins at the far left below the Section.
+Sections:
+
+- span the page width
+- display headings or descriptions
+- organize presentation
+- do not participate in navigation
 
 Sections may be reordered like any other Layout Entry.
 
@@ -158,54 +206,59 @@ Sections may be reordered like any other Layout Entry.
 
 # Properties Panel
 
-Selecting an object displays its editable properties.
+Selecting an object displays the editable properties appropriate for that object.
 
-Properties change based on the selected object type.
+Only relevant properties are shown.
+
+## Container
 
 Examples:
 
-Container
+- Title
+- Subtitle
+- Active state
 
-- Name
-- Header image
-- Description
-- Active
+Future versions may include page-level settings.
 
-YouTube
+---
 
-- Label
-- Thumbnail
-- YouTube URL
+## Navigation Entry
 
-Website
+Navigation Entries derive most of their information from the referenced Container.
 
-- Label
-- Thumbnail
-- Website URL
+Teachers may edit:
 
-PDF
+- Position within the Layout
 
-- Label
-- Thumbnail
-- Document
-
-PowerPoint
-
-- Label
-- Thumbnail
-- Presentation
-
-Information
-
-- Label
-- Thumbnail
-
-Section
+Teachers do not edit:
 
 - Title
-- Style (future)
+- Destination
+- Parent
 
-The editor should never expose internal identifiers or implementation details.
+These properties belong to the referenced Container.
+
+---
+
+## Content Entry
+
+Examples:
+
+- Label
+- Image
+- Target
+- Type-specific properties
+
+---
+
+## Section
+
+Examples:
+
+- Title
+- Description
+
+The editor never exposes internal identifiers or implementation details.
 
 ---
 
@@ -217,21 +270,25 @@ The editor supports:
 - Moving Content Entries between Containers
 - Moving Sections
 - Reordering Navigation Entries
-- Reordering Containers within the Container Tree
+- Reordering Containers
 - Dragging images onto entries
 - Dragging files into the Asset Library
 
-Future versions may support Ctrl+Drag to duplicate Content Entries.
+Future versions may support:
+
+- Ctrl+Drag duplication
+- Multi-selection
+- Clipboard operations
 
 ---
 
 # Context Menu
 
-Context menus should present only operations valid for the selected object.
+Context menus present only operations appropriate for the selected object.
 
 Examples include:
 
-Container
+## Container
 
 - Rename
 - Enable / Disable
@@ -239,13 +296,17 @@ Container
 - Delete
 - Move
 
-Content Entry
+---
+
+## Content Entry
 
 - Duplicate
 - Delete
 - Move
 
-Section
+---
+
+## Section
 
 - Rename
 - Delete
@@ -260,13 +321,50 @@ The editor maintains a reusable Asset Library.
 Examples include:
 
 - Images
-- Videos
+- Local videos
 - Documents
-- PowerPoint Presentations
+- PowerPoint presentations
 
-Assets may be reused by multiple Content Entries.
+Assets may be reused by multiple Layout Entries.
 
 Teachers should never need to locate the same file twice.
+
+---
+
+# Validation
+
+Validation occurs continuously while editing.
+
+The editor distinguishes between structural validation and asset validation.
+
+---
+
+## Structural Validation
+
+Examples include:
+
+- Invalid hierarchy
+- Circular references
+- Invalid parent relationships
+- Duplicate identifiers
+- Invalid Layout Entries
+
+Structural validation failures prevent publishing.
+
+---
+
+## Asset Validation
+
+Examples include:
+
+- Missing image
+- Missing document
+- Missing presentation
+- Missing media
+
+Asset validation generates warnings.
+
+Projects remain editable whenever practical.
 
 ---
 
@@ -274,7 +372,9 @@ Teachers should never need to locate the same file twice.
 
 The editor includes an integrated Student Preview.
 
-Preview renders the currently selected Container exactly as students will experience it.
+Preview uses the same rendering pipeline as Student Mode.
+
+This guarantees that teachers preview exactly what students will experience.
 
 Teachers should be able to switch instantly between editing and previewing.
 
@@ -284,16 +384,14 @@ Teachers should be able to switch instantly between editing and previewing.
 
 Publishing is a deliberate action.
 
-Publishing should:
+Publishing may include:
 
-- Validate the project
-- Detect missing assets
-- Detect broken links
-- Verify YouTube URLs
-- Optimize images
-- Generate the classroom website
-- Commit changes to Git
-- Publish to GitHub Pages
+- Structural validation
+- Asset verification
+- Project serialization
+- Website generation
+- Git commit
+- GitHub Pages deployment
 
 Publishing never modifies the live classroom until validation succeeds.
 
@@ -307,7 +405,7 @@ Validation messages should clearly explain:
 - Why it is wrong
 - How to correct it
 
-Teachers should never receive technical error messages.
+Teachers should never receive technical implementation errors.
 
 ---
 
@@ -325,6 +423,26 @@ Possible future enhancements include:
 - Multi-select editing
 - Copy / Paste
 - Keyboard shortcuts
+- Project templates
+- Import Project
+- Export Project
 - Multiple classroom projects
+- Multiple previews
 - Theme support
 - Cloud asset synchronization
+
+---
+
+# Design Principle
+
+Teacher Mode should allow teachers to think in terms of classrooms rather than software.
+
+Teachers organize Containers.
+
+Teachers arrange Layouts.
+
+Teachers configure Content.
+
+The editor is responsible for translating those actions into a valid Project.
+
+Teachers should never need to understand the underlying implementation.
