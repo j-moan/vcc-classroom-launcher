@@ -3,7 +3,7 @@
 import { renderLayout } from "./renderers/layout-renderer.js";
 import { validateProject } from "./validators/project-validator.js";
 import { validateAssets } from "./validators/asset-validator.js";
-import { loadProject, ProjectLoadError } from "./project/project-loader.js";
+import { loadProject, ProjectLoadError } from "./loaders/project-loader.js";
 
 let project = null;
 
@@ -28,11 +28,6 @@ async function initialize() {
     handleProjectLoadFailure(error);
     return;
   }
-
-  // *********=========================================*******
-  // Test Space
-
-  // *********=========================================*******
 
   const projectData = project.toObject();
   const projectValidation = validateProject(projectData);
