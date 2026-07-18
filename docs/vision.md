@@ -1,28 +1,39 @@
 # VCC Classroom Launcher
 
-## Vision
+# Vision
 
-VCC Classroom Launcher is a touch-friendly visual classroom interface designed for teachers and students who benefit from simple, image-based navigation.
+**Version:** 2.0 (Draft)
 
-The system allows a teacher to organize classroom resources as visual tiles. Each tile contains an image and a label and may open another page, play a video, open a website or document, display an image, or act as a non-interactive information tile.
+**Status:** Current
 
-## Primary Users
+**Last Updated:** July 2026
 
-### Students
+---
 
-Students use a simplified full-screen launcher with:
+# Purpose
 
-- Large visual tiles
-- Minimal text
-- Home and Back controls
-- Consistent touch feedback
-- No editing controls or technical menus
+The VCC Classroom Launcher exists to make classroom technology easier for teachers to manage and easier for students to use.
 
-### Teachers
+The platform provides a visual, touch-friendly classroom experience built around images, simple navigation, and predictable interaction.
 
-Teachers use a visual content editor designed to feel familiar to users of Windows Explorer and PowerPoint.
+Students interact with classroom content.
 
-Teachers should not need to understand:
+Teachers create and manage classroom experiences.
+
+---
+
+# Vision
+
+The long-term vision is to create a classroom authoring platform that allows teachers to organize, present, and maintain digital classroom resources without requiring technical knowledge.
+
+Teachers should think in terms of:
+
+- classroom pages
+- activities
+- lessons
+- visual organization
+
+They should never need to think about:
 
 - HTML
 - CSS
@@ -30,53 +41,169 @@ Teachers should not need to understand:
 - JSON
 - Git
 - File paths
-- YouTube video IDs
+- Web hosting
+- Programming
 
-## Core Goals
+The software should manage those details automatically.
 
-- Make classroom resources easy to find and launch.
-- Support touchscreens and interactive classroom displays.
-- Allow teachers to create nested visual page structures.
+---
+
+# Primary Users
+
+## Students
+
+Students use a simplified full-screen interface designed around visual navigation.
+
+Student Mode should provide:
+
+- Large visual tiles
+- Minimal text
+- Consistent navigation
+- Immediate touch feedback
+- No technical controls
+- No editing features
+- No unnecessary distractions
+
+Students should always know where they are and how to return home.
+
+---
+
+## Teachers
+
+Teachers use a visual classroom authoring environment.
+
+Teacher Mode should feel familiar to users of:
+
+- Windows Explorer
+- Microsoft PowerPoint
+
+Teacher Mode should support creating classroom experiences without requiring programming knowledge.
+
+The editor should encourage experimentation while protecting teachers from creating invalid classroom projects.
+
+---
+
+# Product Goals
+
+The platform should:
+
+- Make classroom resources easy to locate.
+- Reduce classroom technology complexity.
+- Support large interactive touch displays.
+- Support traditional desktop computers.
 - Keep student navigation simple and predictable.
-- Allow teachers to edit and preview content without coding.
-- Publish classroom updates safely and reliably.
-- Preserve inactive or seasonal content for future use.
-- Support reusable images, videos, documents, and presentations.
+- Allow teachers to organize classroom resources visually.
+- Support reusable classroom assets.
+- Validate projects before publishing.
+- Publish classroom updates safely.
+- Preserve classroom content for future reuse.
 
-## Student Experience
+---
 
-The student-facing application should provide:
+# Student Experience
+
+Student Mode should provide:
 
 - A visual landing page
-- Eight tiles across by default on large displays
-- Image-and-label tiles
-- Touch feedback on every tile
-- Home and Back navigation
-- Full-screen or overlay playback where practical
-- Automatic return to the same page after media closes or finishes
+- Consistent page layouts
+- Image-and-label navigation
+- Fast navigation
+- Home and Back controls
+- Responsive touch interaction
+- Graceful handling of missing assets
+- Immediate access to classroom resources
 
-## Teacher Editor Experience
+The interface should feel calm, predictable, and free from unnecessary controls.
 
-The editor should provide:
+Students should interact with learning content rather than software.
 
-- A collapsible navigation tree containing containers only
-- A tile-grid view resembling the student experience
-- Drag-and-drop reordering
-- Drag-and-drop movement between containers
-- Add, rename, duplicate, move, activate, deactivate, and delete commands
-- A reusable asset library
-- Teacher preview mode
-- Validation before publishing
-- A clear Publish command
+---
 
-## Design Principle
+# Teacher Experience
 
-The editor should feel like PowerPoint combined with Windows Explorer, not like a website builder or programming tool.
+Teacher Mode should provide:
 
-## Long-Term Vision
+- Visual Container Tree
+- Visual Layout Editor
+- Drag-and-drop editing
+- Property editing
+- Asset Library
+- Continuous validation
+- Student Preview
+- Publishing workflow
 
-The VCC Classroom Launcher is intended to become the foundation of the Visual Communication for the Classroom platform.
+The editor should encourage teachers to organize classrooms naturally rather than requiring them to understand implementation details.
 
-The platform will enable teachers to organize, manage, and present visual classroom resources through an intuitive touch-friendly interface.
+---
 
-Future versions will support reusable content libraries, classroom templates, and tools that simplify the creation and sharing of engaging classroom experiences.
+# Core Principles
+
+The platform is guided by several principles.
+
+## Visual First
+
+Images should communicate before text whenever practical.
+
+---
+
+## Teacher First
+
+The software should adapt to teachers.
+
+Teachers should never be expected to adapt to the software.
+
+---
+
+## Student Simplicity
+
+Student Mode should expose only the controls required to complete classroom activities.
+
+---
+
+## Reliability
+
+The classroom should remain usable whenever practical.
+
+Missing resources should degrade gracefully rather than producing broken interfaces.
+
+---
+
+## Consistency
+
+Navigation, presentation, and interaction should remain predictable throughout every classroom.
+
+---
+
+## Extensibility
+
+The platform should support future capabilities without requiring architectural redesign.
+
+---
+
+# Long-Term Vision
+
+The VCC Classroom Launcher is intended to become the foundation of the **Visual Communication for the Classroom (VCC)** platform.
+
+Future versions may include:
+
+- Classroom templates
+- Shared classroom libraries
+- Portable classroom projects
+- Asset libraries
+- Import / Export
+- Multiple classroom projects
+- Cloud synchronization
+- District-wide deployment
+- Collaborative editing
+
+The long-term objective is not simply to launch classroom resources.
+
+The objective is to provide teachers with an intuitive platform for designing, organizing, and presenting engaging classroom experiences.
+
+---
+
+# Guiding Principle
+
+Students should experience learning—not software.
+
+Teachers should experience teaching—not technology.

@@ -2,180 +2,287 @@
 
 # Project Roadmap
 
+**Version:** 2.0 (Draft)
+
+**Status:** Current
+
+**Last Updated:** July 2026
+
+---
+
+# Purpose
+
 This roadmap describes the planned evolution of the VCC Classroom Launcher.
 
-The roadmap is intended to guide development and may change as new ideas emerge.
+The roadmap follows the architectural layering defined in **Software Architecture.md**.
+
+Each phase builds upon the previous phase while keeping the application operational whenever practical.
 
 ---
 
-# Milestone 1 — Foundation ✅
+# Phase 1 — Foundation ✅
 
-Status: Complete
+**Status:** Complete
 
-Goals
+## Goals
 
-- GitHub repository created
-- GitHub Pages publishing
-- Development environment established
-- Basic application architecture
+- Git repository
+- GitHub Pages
+- Development environment
 - Single Page Application
+- Initial documentation
+- Student interface shell
 - Header
-- Home button
-- Back button
-- Image tiles
-- Navigation between containers
-- Global application defaults
-- Initial project documentation
+- Home navigation
+- Back navigation
+
+## Deliverable
+
+Working browser application.
 
 ---
 
-# Milestone 2 — Data Model
+# Phase 2 — Project Architecture ✅
 
-Status: In Progress
+**Status:** Complete
 
-Goals
+## Goals
 
-- Final Item-based architecture
-- Container hierarchy
-- Item types
-- Parent relationships
-- Common properties
-- Active item support
-- Remove legacy page/tile architecture
-- Refactor current prototype
+- Container architecture
+- Layout architecture
+- Navigation model
+- Project documentation
+- Modular data model
+- Student navigation
+- Container/Layout rendering
 
-Deliverable
+## Deliverable
 
-Stable data model that future versions will build upon.
+Stable project architecture.
 
 ---
 
-# Milestone 3 — Student Launcher
+# Phase 3 — Runtime Architecture ✅
 
-Goals
+**Status:** Complete
 
-- Complete navigation
-- Launch YouTube videos
-- Launch local videos
-- Open websites
-- Display images
-- Display PDFs
+## Goals
+
+- Project Loader
+- Structural Validator
+- Asset Validator
+- Modular renderers
+- Application controller
+- Graceful asset fallback
+- Runtime separation of responsibilities
+
+## Deliverable
+
+Stable Student Mode runtime.
+
+---
+
+# Phase 4 — Student Launcher
+
+**Status:** In Progress
+
+## Goals
+
+- YouTube support
+- Local video support
+- Website support
+- PDF support
 - PowerPoint support
-- Information tiles
+- Image support
+- Information entries
 - Responsive layout
-- Final visual polish
-- Animation improvements
+- Final student UI polish
 
-Deliverable
+## Deliverable
 
-A classroom-ready launcher suitable for daily student use.
+Complete Student Mode suitable for daily classroom use.
 
 ---
 
-# Milestone 4 — Asset Management
+# Phase 5 — Project Model
 
-Goals
+**Status:** Planned
 
-- Asset library
+## Goals
+
+- Project Model
+- Project operations
+- Undo-ready architecture
+- Editing API
+- Serialization model
+- Project integrity management
+
+## Deliverable
+
+Editable Project Model independent of storage format.
+
+---
+
+# Phase 6 — Teacher Mode Foundation
+
+**Status:** Planned
+
+## Goals
+
+- Teacher application shell
+- Container Tree
+- Layout Editor
+- Properties panel
+- Continuous validation
+- Student Preview
+
+## Deliverable
+
+Basic visual editor.
+
+---
+
+# Phase 7 — Asset Library
+
+**Status:** Planned
+
+## Goals
+
 - Image management
 - Video management
-- PDF management
-- PowerPoint management
-- Automatic image optimization
-- Automatic thumbnail generation
-
-Deliverable
-
-Teachers no longer manage project folders manually.
-
----
-
-# Milestone 5 — Content Editor
-
-Goals
-
-- Explorer-style navigation
-- Collapsible tree
-- Tile editing
-- Drag-and-drop
-- Context menus
-- Property editor
-- Add Item wizard
+- Document management
+- Presentation management
 - Asset picker
-- Auto-save
-- Undo / Redo
+- Asset reuse
 
-Deliverable
+## Deliverable
 
-Complete teacher editing environment.
-
----
-
-# Milestone 6 — Publishing
-
-Goals
-
-- Validation
-- Broken link detection
-- Missing asset detection
-- YouTube validation
-- Publish workflow
-- Git integration
-- GitHub Pages deployment
-
-Deliverable
-
-One-click classroom publishing.
+Teachers no longer manage classroom assets manually.
 
 ---
 
-# Milestone 7 — Teacher Experience
+# Phase 8 — Editing Experience
 
-Goals
+**Status:** Planned
 
-- Student Preview
-- Search
-- Keyboard shortcuts
-- Bulk editing
+## Goals
+
+- Drag and drop
+- Context menus
 - Duplicate
+- Copy / Paste
+- Undo / Redo
+- Keyboard shortcuts
+- Search
 - Multi-select
 - Recent assets
 - Favorites
 
-Deliverable
+## Deliverable
 
-Highly productive editing experience.
+Highly productive editing environment.
 
 ---
 
-# Milestone 8 — Version 1.0
+# Phase 9 — Project Persistence
 
-Goals
+**Status:** Planned
+
+## Goals
+
+- project-data.json
+- Import Project
+- Export Project
+- Project serialization
+- Project loading
+- Multiple projects
+
+## Deliverable
+
+Portable classroom projects.
+
+---
+
+# Phase 10 — Publishing
+
+**Status:** Planned
+
+## Goals
+
+- Publish validation
+- Asset verification
+- Project generation
+- Git integration
+- GitHub Pages deployment
+
+## Deliverable
+
+One-click publishing.
+
+---
+
+# Phase 11 — Version 1.0
+
+**Status:** Planned
+
+## Goals
 
 - Classroom testing
 - Performance tuning
-- Documentation
+- Accessibility review
+- Documentation review
 - Bug fixing
 - Final UI polish
-- Release candidate
 
-Deliverable
+## Deliverable
 
 Production-ready classroom platform.
 
 ---
 
-# Future Ideas
+# Long-Term Enhancements
 
-Possible future enhancements include:
+Potential future enhancements include:
 
-- Multiple classroom projects
-- Shared asset libraries
-- Cloud synchronization
+- Cloud project storage
+- Shared classroom libraries
+- District deployment
 - User accounts
 - Classroom templates
-- Import / Export
-- PowerPoint conversion
-- AI-assisted content creation
+- Theme support
+- AI-assisted classroom creation
 - Analytics
 - Multi-language support
+- Collaborative editing
+- Version history
+
+---
+
+# Current Progress
+
+| Phase                   | Status         |
+| ----------------------- | -------------- |
+| Foundation              | ✅ Complete    |
+| Project Architecture    | ✅ Complete    |
+| Runtime Architecture    | ✅ Complete    |
+| Student Launcher        | 🔄 In Progress |
+| Project Model           | Planned        |
+| Teacher Mode Foundation | Planned        |
+| Asset Library           | Planned        |
+| Editing Experience      | Planned        |
+| Project Persistence     | Planned        |
+| Publishing              | Planned        |
+| Version 1.0             | Planned        |
+
+---
+
+# Guiding Principle
+
+Each phase should leave the project in a working state.
+
+Whenever practical:
+
+- Documentation precedes implementation.
+- Validation precedes rendering.
+- Architecture precedes features.
+- Student Mode remains operational throughout development.

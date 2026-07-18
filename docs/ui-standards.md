@@ -1,27 +1,74 @@
 # VCC Classroom Launcher
 
-# UI Standards
+# Student UI Standards
 
-## Purpose
+**Version:** 2.0 (Draft)
 
-This document defines the visual and interaction standards for the VCC Classroom Launcher.
+**Status:** Current
 
-The goal is to keep the student experience simple, consistent, touch-friendly, and easy to understand across all classroom pages.
+**Last Updated:** July 2026
 
 ---
 
-# Student Interface Principles
+# Purpose
 
-The student-facing interface should be:
+This document defines the visual and interaction standards for Student Mode.
+
+Its purpose is to ensure every classroom provides a consistent experience regardless of content.
+
+Teacher Mode follows separate interface standards.
+
+---
+
+# Design Principles
+
+Student Mode should be:
 
 - Visual
 - Predictable
-- Touch-friendly
-- Low-clutter
-- Consistent across pages
-- Easy to use without reading instructions
+- Touch-first
+- Low distraction
+- Consistent
+- Accessible
+- Fast
 
-The interface should avoid unnecessary menus, controls, text, and distractions.
+Students should be able to navigate naturally without instructions.
+
+Every page should behave the same way.
+
+---
+
+# General Rules
+
+Student Mode should never expose:
+
+- Project structure
+- Technical terminology
+- Validation information
+- File names
+- Internal identifiers
+- Teacher controls
+
+Students interact only with classroom content.
+
+---
+
+# Page Structure
+
+Every page consists of three primary regions.
+
+```
+Header
+----------------------------
+
+Content Area
+
+----------------------------
+
+Temporary Messages
+```
+
+The overall page structure remains consistent throughout the application.
 
 ---
 
@@ -29,49 +76,72 @@ The interface should avoid unnecessary menus, controls, text, and distractions.
 
 The header contains:
 
-- A full-width background image
-- A centered page title
-- Home and Back controls in the upper-right corner
+- Background image
+- Centered page title
+- Home button
+- Back button
 
-The header should be compact enough to preserve screen space for classroom content.
-
-Current standard:
-
-- Large centered title
-- Approximately 40% shorter than the original prototype header
-- Background image fills the header
-- Home and Back buttons appear as white circular controls
+The header should maximize available space for classroom content while remaining visually attractive.
 
 ---
 
-# Navigation Controls
+## Header Height
+
+The header should remain compact.
+
+Current implementation targets approximately 40% less height than the original prototype.
+
+---
+
+## Page Title
+
+The page title should:
+
+- Be centered
+- Be highly visible
+- Remain readable from several feet away
+
+Only one title should appear on the page.
+
+---
+
+# Navigation
+
+Student Mode supports only two navigation controls.
 
 ## Home
 
-The Home button always returns to the root classroom page.
-
-## Back
-
-The Back button returns to the parent container.
-
-The Back button should be hidden when the user is already on the Home page.
-
-## Position
-
-Navigation controls appear together in the upper-right corner of the header.
-
-They should remain easy to reach on a large touchscreen.
+Returns to the root Container.
 
 ---
 
-# Tile Layout
+## Back
 
-The default layout is:
+Returns to the parent Container.
 
-- Eight tiles across on large classroom displays
-- Tiles arranged left to right, then top to bottom
-- Consistent spacing between tiles
-- Responsive reduction in column count on smaller screens
+Back is hidden on the root Container.
+
+---
+
+## Navigation Position
+
+Home and Back appear together in the upper-right corner.
+
+They should remain easily reachable on a large touch display.
+
+---
+
+# Layout
+
+The application displays one Layout at a time.
+
+The Layout consists of an ordered collection of Layout Entries.
+
+Entries are rendered from beginning to end.
+
+---
+
+## Default Columns
 
 Application default:
 
@@ -79,158 +149,214 @@ Application default:
 const DEFAULT_COLUMNS = 8;
 ```
 
-A page or section may override the default when necessary.
+Containers may override this value.
+
+Responsive layouts reduce the column count automatically when required.
 
 ---
 
-# Tile Structure
+# Tiles
 
-Every tile contains:
+All Navigation Entries and Content Entries use the same tile component.
 
-1. Image
-2. Label
+Every tile consists of:
 
-No description is shown beneath the label in the student interface.
+- Image area
+- Label
 
-The tile image should use:
+Descriptions are not displayed in Student Mode.
+
+---
+
+## Tile Appearance
+
+Tiles should use:
+
+- Rounded corners
+- White background
+- Light shadow
+- Subtle border
+- Consistent spacing
+
+Visual styling should remain understated.
+
+Content should receive the student's attention rather than decorative effects.
+
+---
+
+## Images
+
+Images should use:
 
 ```css
 object-fit: cover;
 ```
 
-This allows the image to fill the tile frame.
+Images fill the available image area.
+
+Cropping is preferred over distortion.
 
 ---
 
-# Tile Appearance
+## Missing Images
 
-Tiles should use:
+If an image cannot be loaded:
 
-- Rounded corners
-- Subtle borders
-- Light shadows
-- White background
-- Centered labels
-- Minimal decorative elements
+- The tile remains visible.
+- The layout remains unchanged.
+- A "No image" placeholder is displayed.
 
-Current image-frame corner radius:
-
-```css
-border-radius: 14px;
-```
+Missing assets should never produce broken interface elements.
 
 ---
 
-# Tile Labels
+## Labels
 
-Tile labels should be:
+Labels should be:
 
-- Centered
 - Bold
-- Easy to read from several feet away
-- Small enough to support eight tiles across
+- Centered
+- Easy to read
+- Large enough to read from across the room
 
-Current starting point:
+Current implementation:
 
 ```css
 font-size: 0.95rem;
 font-weight: 700;
 ```
 
-Final values may be adjusted after testing on the 65-inch classroom touchscreen.
+These values may be adjusted following classroom testing.
 
 ---
 
-# Touch and Mouse Feedback
+# Sections
 
-Every tile should provide immediate visual feedback when selected.
+Sections visually organize the Layout.
 
-## Touch
+Sections:
 
-The active state should briefly confirm that the touch was registered.
+- Span the page width.
+- Display headings and optional descriptions.
+- Separate groups of related content.
 
-## Mouse
-
-Hover may lift the tile slightly and increase the shadow.
-
-Example:
-
-```css
-.classroom-tile:hover .tile-image-frame {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(60, 64, 67, 0.28);
-}
-```
-
-Hover behavior is optional on touchscreens but useful on desktop computers.
+Sections never perform actions.
 
 ---
 
-# Information Tiles
+# Interaction
 
-Information tiles look and respond like other tiles.
+Student Mode supports both touch and mouse interaction.
 
-When selected:
+Touch is the primary input method.
 
-- The normal touch animation occurs
-- No navigation or content launch occurs
-- The user remains on the current page
+---
+
+## Touch Feedback
+
+Every selection should produce immediate visual feedback.
+
+Students should never wonder whether a touch was recognized.
+
+---
+
+## Mouse Feedback
+
+Desktop users may receive additional hover effects.
+
+Hover effects should never be required for operation.
+
+---
+
+# Information Entries
+
+Information Entries behave like normal tiles visually.
+
+Selecting an Information Entry performs no navigation or content launch.
+
+The current page remains displayed.
 
 ---
 
 # Responsive Behavior
 
-The interface should adapt to smaller displays.
+The interface should remain usable across multiple screen sizes.
 
-The target behavior is:
+Target behavior:
 
-- Large classroom display: up to 8 columns
-- Laptop or smaller display: fewer columns
-- Tablet: fewer columns
+- Classroom display: up to 8 columns
+- Desktop monitor: fewer columns when necessary
+- Tablet: reduced column count
 - Phone: one or two columns
 
-The responsive layout must preserve readable labels and usable touch targets.
+Layouts should preserve readable labels and comfortable touch targets.
 
 ---
 
 # Accessibility
 
-The interface should include:
+Student Mode should support:
 
-- Clear keyboard focus indicators
-- Meaningful `aria-label` values
-- Adequate color contrast
+- Keyboard navigation
+- Visible keyboard focus
+- Meaningful aria-label values
+- Sufficient color contrast
 - Large touch targets
-- Predictable navigation
-- No critical action dependent only on color
 
-Images should include meaningful alternative text when appropriate.
+No important operation should depend solely on color.
+
+Images should include meaningful alternative text whenever appropriate.
 
 ---
 
 # Visual Consistency
 
-All classroom pages should use the same:
+Every classroom page should use the same:
 
-- Header structure
+- Header
 - Navigation controls
-- Tile shape
-- Label style
+- Tile appearance
+- Label styling
+- Section styling
 - Touch feedback
-- Spacing rules
+- Spacing
 
-Page-specific customization should be limited and intentional.
+Only classroom content should vary between pages.
+
+---
+
+# Error Presentation
+
+Whenever practical, Student Mode should fail gracefully.
+
+Examples include:
+
+- Missing images display placeholders.
+- Disabled Containers are simply absent.
+- Missing assets never produce browser errors visible to students.
+
+Validation details belong in Teacher Mode rather than Student Mode.
 
 ---
 
 # Future Review
 
-These standards should be reviewed after Nicole tests the application on the actual 65-inch touchscreen.
+These standards should be reviewed after testing on Nicole's 65-inch classroom touchscreen.
 
-Expected areas for adjustment:
+Expected review topics include:
 
+- Header height
 - Label size
 - Tile spacing
-- Header height
-- Button size
-- Responsive column thresholds
+- Button sizing
+- Responsive breakpoints
+- Touch target size
+- Placeholder appearance
+
+---
+
+# Design Principle
+
+Student Mode exists to present classroom content—not software.
+
+Every screen should feel calm, predictable, and immediately understandable to students.
