@@ -1,59 +1,97 @@
 "use strict";
 
-/*
-  VCC Classroom Launcher
-  Student-mode rendering and interaction logic
-*/
+import { renderLayout } from "./renderers/layout-renderer.js";
+import { validateProject } from "./validators/project-validator.js";
+import { validateAssets } from "./validators/asset-validator.js";
 
 const site = window.CLASSROOM_SITE;
 
-// =========================================
-// Application Defaults
-// =========================================
-
 const DEFAULT_COLUMNS = 8;
 
-// =========================================
-// DOM References
-// =========================================
+const elements = {
+  pageTitle: document.getElementById("pageTitle"),
+  pageSubtitle: document.getElementById("pageSubtitle"),
+  pageSections: document.getElementById("pageSections"),
+  homeButton: document.getElementById("homeButton"),
+  backButton: document.getElementById("backButton"),
+  messageBox: document.getElementById("messageBox"),
+};
 
-const pageTitle = document.getElementById("pageTitle");
-const pageSubtitle = document.getElementById("pageSubtitle");
-const pageSections = document.getElementById("pageSections");
-const homeButton = document.getElementById("homeButton");
-const backButton = document.getElementById("backButton");
-const messageBox = document.getElementById("messageBox");
-
-// =========================================
-// Application State
-// =========================================
-
-let currentContainerId = site.startContainer;
+let currentContainerId = null;
 let messageTimerId = null;
 
-// =========================================
-// Application Startup
-// =========================================
+async function initialize() {
+  const projectValidation = validateProject(site);
 
-function initialize() {
-  if (!site || !site.containers) {
-    showMessage("The classroom data could not be loaded.");
+  reportValidation(projectValidation);
+
+  if (!projectValidation.valid) {
+    showMessage(
+      `The classroom project contains ${projectValidation.errors.length} validation error${
+        projectValidation.errors.length === 1 ? "" : "s"
+      }.`,
+    );
+
+    elements.pageTitle.textContent = "Classroom unavailable";
+    elements.pageSections.replaceChildren();
+
     return;
   }
 
-  if (!site.startContainer) {
-    showMessage("No starting classroom page has been configured.");
-    return;
-  }
+  // Render immediately. Missing assets should not delay Student Mode.
+  navigateToContainer(site.startContainer);
 
-  renderContainer(site.startContainer);
+  const assetValidation = await validateAssets(site);
+  reportAssetValidation(assetValidation);
 }
 
-// =========================================
-// Container Rendering
-// =========================================
+function reportValidation(validation) {
+  if (validation.errors.length > 0) {
+    console.group(`VCC validation errors (${validation.errors.length})`);
 
-function renderContainer(containerId) {
+    validation.errors.forEach((issue) => {
+      console.error(`[${issue.code}] ${issue.message}`, issue.context);
+    });
+
+    console.groupEnd();
+  }
+
+  if (validation.warnings.length > 0) {
+    console.group(`VCC validation warnings (${validation.warnings.length})`);
+
+    validation.warnings.forEach((issue) => {
+      console.warn(`[${issue.code}] ${issue.message}`, issue.context);
+    });
+
+    console.groupEnd();
+  }
+
+  if (validation.errors.length === 0 && validation.warnings.length === 0) {
+    console.info("VCC project validation passed.");
+  }
+}
+
+function reportAssetValidation(validation) {
+  if (validation.warnings.length > 0) {
+    console.group(`VCC asset validation warnings (${validation.warnings.length})`);
+
+    validation.warnings.forEach((issue) => {
+      console.warn(`[${issue.code}] ${issue.message}`, issue.context);
+    });
+
+    console.groupEnd();
+
+    return;
+  }
+
+  console.info(
+    `VCC asset validation passed. ${validation.checkedCount} image asset${
+      validation.checkedCount === 1 ? "" : "s"
+    } checked.`,
+  );
+}
+
+function navigateToContainer(containerId) {
   const container = getContainer(containerId);
 
   if (!container) {
@@ -67,254 +105,81 @@ function renderContainer(containerId) {
   }
 
   currentContainerId = containerId;
-  pageSections.setAttribute("aria-busy", "true");
 
   updateHeader(container);
-  updateNavigation(container);
-  clearPage();
-
-  const layoutGrid = createLayoutGrid(container);
-  pageSections.appendChild(layoutGrid);
-
-  pageSections.setAttribute("aria-busy", "false");
+  updateNavigationButtons(container);
+  renderCurrentContainer(container);
 }
 
-// =========================================
-// Header and Navigation
-// =========================================
+function renderCurrentContainer(container) {
+  elements.pageSections.setAttribute("aria-busy", "true");
+  elements.pageSections.replaceChildren();
+
+  const renderedLayout = renderLayout({
+    container,
+    containerId: currentContainerId,
+    defaultColumns: DEFAULT_COLUMNS,
+    getContainer,
+    isContainerAccessible,
+    onNavigate: navigateToContainer,
+    onAction: handleContentAction,
+  });
+
+  elements.pageSections.appendChild(renderedLayout);
+  elements.pageSections.setAttribute("aria-busy", "false");
+}
 
 function updateHeader(container) {
-  pageTitle.textContent = container.title;
-  document.title = `${container.title} | VCC Classroom Launcher`;
+  elements.pageTitle.textContent = container.title || "Classroom";
+  document.title = `${container.title || "Classroom"} | VCC Classroom Launcher`;
 
-  if (container.subtitle) {
-    pageSubtitle.textContent = container.subtitle;
-  } else {
-    pageSubtitle.textContent = "";
-  }
-
-  // Subtitles remain hidden in the current student interface.
-  pageSubtitle.hidden = true;
+  elements.pageSubtitle.textContent = container.subtitle || "";
+  elements.pageSubtitle.hidden = true;
 }
 
-function updateNavigation(container) {
-  const isHomeContainer = currentContainerId === site.startContainer;
+function updateNavigationButtons(container) {
+  const isHome = currentContainerId === site.startContainer;
 
-  homeButton.hidden = isHomeContainer;
-  backButton.hidden = isHomeContainer || !container.parent;
+  elements.homeButton.hidden = isHome;
+  elements.backButton.hidden = isHome || !container.parent;
 }
 
 function navigateHome() {
-  renderContainer(site.startContainer);
+  navigateToContainer(site.startContainer);
 }
 
 function navigateBack() {
   const currentContainer = getContainer(currentContainerId);
 
-  if (!currentContainer?.parent) {
-    return;
+  if (currentContainer?.parent) {
+    navigateToContainer(currentContainer.parent);
   }
-
-  renderContainer(currentContainer.parent);
 }
 
-// =========================================
-// Layout Rendering
-// =========================================
-
-function clearPage() {
-  pageSections.replaceChildren();
-}
-
-function createLayoutGrid(container) {
-  const grid = document.createElement("div");
-  grid.className = "tile-grid";
-  grid.style.setProperty("--page-columns", container.columns || DEFAULT_COLUMNS);
-
-  const layout = Array.isArray(container.layout) ? container.layout : [];
-
-  layout.forEach((entry) => {
-    const element = renderLayoutEntry(entry, container);
-
-    if (element) {
-      grid.appendChild(element);
-    }
-  });
-
-  return grid;
-}
-
-function renderLayoutEntry(entry, parentContainer) {
-  if (!entry || !entry.type) {
-    return null;
-  }
-
+function handleContentAction(entry) {
   switch (entry.type) {
-    case "navigation":
-      return renderNavigationEntry(entry, parentContainer);
-
-    case "section":
-      return renderSectionEntry(entry);
-
     case "video":
-      return renderContentTile(entry);
-
-    case "website":
-    case "pdf":
-    case "powerpoint":
-    case "image":
-    case "information":
-      return renderContentTile(entry);
-
-    default:
-      console.warn(`Unsupported layout entry type: ${entry.type}`);
-      return null;
-  }
-}
-
-// =========================================
-// Navigation Entries
-// =========================================
-
-function renderNavigationEntry(entry, parentContainer) {
-  const childContainer = getContainer(entry.container);
-
-  if (!childContainer) {
-    console.warn(`Navigation entry references missing container: ${entry.container}`);
-    return null;
-  }
-
-  if (childContainer.parent !== currentContainerId) {
-    console.warn(
-      `Container "${entry.container}" is not a direct child of "${currentContainerId}".`,
-    );
-    return null;
-  }
-
-  if (!isContainerAccessible(entry.container)) {
-    return null;
-  }
-
-  const tileData = {
-    type: "navigation",
-    label: childContainer.title,
-    image: entry.image,
-    target: entry.container,
-  };
-
-  return createTile(tileData);
-}
-
-// =========================================
-// Section Entries
-// =========================================
-
-function renderSectionEntry(entry) {
-  const section = document.createElement("section");
-  section.className = "page-section";
-  section.style.gridColumn = "1 / -1";
-
-  if (entry.title) {
-    const heading = document.createElement("h2");
-    heading.className = "section-heading";
-    heading.textContent = entry.title;
-    section.appendChild(heading);
-  }
-
-  if (entry.description) {
-    const description = document.createElement("p");
-    description.className = "section-description";
-    description.textContent = entry.description;
-    section.appendChild(description);
-  }
-
-  return section;
-}
-
-// =========================================
-// Content Entries
-// =========================================
-
-function renderContentTile(entry) {
-  const tileData = {
-    type: entry.type,
-    label: entry.label || entry.title || "Untitled",
-    image: entry.image,
-    target: entry.target,
-  };
-
-  return createTile(tileData);
-}
-
-function createTile(tileData) {
-  const tile = document.createElement("button");
-
-  tile.type = "button";
-  tile.className = "classroom-tile";
-  tile.setAttribute("aria-label", tileData.label);
-
-  const imageFrame = document.createElement("span");
-  imageFrame.className = "tile-image-frame";
-
-  if (tileData.image) {
-    const image = document.createElement("img");
-    image.className = "tile-image tile-image-cover";
-    image.src = tileData.image;
-    image.alt = tileData.label;
-
-    image.addEventListener("error", () => {
-      image.hidden = true;
-    });
-
-    imageFrame.appendChild(image);
-  }
-
-  const label = document.createElement("span");
-  label.className = "tile-label";
-  label.textContent = tileData.label;
-
-  tile.append(imageFrame, label);
-
-  tile.addEventListener("click", () => {
-    handleTileSelection(tileData);
-  });
-
-  return tile;
-}
-
-// =========================================
-// Tile Actions
-// =========================================
-
-function handleTileSelection(tileData) {
-  switch (tileData.type) {
-    case "navigation":
-      renderContainer(tileData.target);
-      break;
-
-    case "video":
-      showMessage(`Video selected: ${tileData.label}`);
+      showMessage(`Video selected: ${getEntryLabel(entry)}`);
       break;
 
     case "information":
-      // Information entries intentionally perform no action.
       break;
 
     case "website":
     case "pdf":
     case "powerpoint":
     case "image":
-      showMessage(`${tileData.label} selected.`);
+      showMessage(`${getEntryLabel(entry)} selected.`);
       break;
 
     default:
-      showMessage(`Unsupported content type: ${tileData.type}`);
+      showMessage(`Unsupported content type: ${entry.type}`);
   }
 }
 
-// =========================================
-// Container Access
-// =========================================
+function getEntryLabel(entry) {
+  return entry.label || entry.title || "Untitled";
+}
 
 function getContainer(containerId) {
   return site.containers[containerId] || null;
@@ -345,33 +210,21 @@ function isContainerAccessible(containerId) {
   return false;
 }
 
-// =========================================
-// Messages
-// =========================================
-
 function showMessage(message) {
   if (messageTimerId) {
     window.clearTimeout(messageTimerId);
   }
 
-  messageBox.textContent = message;
-  messageBox.hidden = false;
+  elements.messageBox.textContent = message;
+  elements.messageBox.hidden = false;
 
   messageTimerId = window.setTimeout(() => {
-    messageBox.hidden = true;
+    elements.messageBox.hidden = true;
     messageTimerId = null;
   }, 4000);
 }
 
-// =========================================
-// Event Listeners
-// =========================================
+elements.homeButton.addEventListener("click", navigateHome);
+elements.backButton.addEventListener("click", navigateBack);
 
-homeButton.addEventListener("click", navigateHome);
-backButton.addEventListener("click", navigateBack);
-
-// =========================================
-// Start Application
-// =========================================
-
-initialize();
+void initialize();

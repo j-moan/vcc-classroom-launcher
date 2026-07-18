@@ -110,7 +110,6 @@ body {
   position: relative;
   width: 100%;
   overflow: hidden;
-
   aspect-ratio: 4 / 3;
   border: 1px solid var(--header-border);
   border-radius: 14px;
@@ -124,6 +123,21 @@ body {
   height: 100%;
   object-fit: contain;
   background: white;
+}
+
+.tile-image-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eeeeee;
+}
+
+.tile-image-placeholder {
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
 }
 
 .tile-image-cover {
