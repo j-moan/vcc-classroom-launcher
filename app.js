@@ -3,7 +3,7 @@
 import { renderLayout } from "./renderers/layout-renderer.js";
 import { validateProject } from "./validators/project-validator.js";
 import { validateAssets } from "./validators/asset-validator.js";
-import { loadProject, ProjectLoadError } from "./loaders/project-loader.js";
+import { loadProject, ProjectLoadError } from "./project/project-loader.js";
 
 let project = null;
 
