@@ -7,6 +7,7 @@ import {
   saveWorkingProjectData,
   publishProject,
 } from "./project/project-storage.js";
+import { getImagePath, getDefaultTileImagePath } from "./utilities/asset-paths.js";
 
 const publishButton = document.querySelector("#publish-button");
 const toolbarButtons = document.querySelectorAll(".teacher-tool-button");
@@ -258,15 +259,15 @@ function createLayoutThumbnail(entry) {
     return frame;
   }
 
-  const imagePath = entry.image || "images/default-page.jpg";
+  const imageFileName = entry.image;
 
   const image = document.createElement("img");
   image.className = "teacher-layout-thumbnail";
-  image.src = imagePath;
+  image.src = imageFileName ? getImagePath(imageFileName) : getDefaultTileImagePath();
   image.alt = "";
 
   image.addEventListener("error", () => {
-    image.src = "images/default-page.jpg";
+    image.src = getDefaultTileImagePath();
   });
 
   frame.appendChild(image);
@@ -296,7 +297,7 @@ function getLayoutName(entry) {
     return targetContainer?.title || "Missing Page";
   }
 
-  return entry.label || entry.title || "Untitled Item";
+  return entry.label || "Untitled Item";
 }
 
 function selectLayoutEntry(entryIndex) {
@@ -388,7 +389,7 @@ function createSubpage(event) {
     const newContainerId = project.createContainer({
       title: pageName,
       parentId: selectedContainerId,
-      navigationImage: "images/default-page.jpg",
+      navigationImage: "",
     });
 
     saveWorkingProjectData(project.toObject());
@@ -472,8 +473,8 @@ async function deleteSelectedPage() {
 function openAddTileDialog() {
   tileNameInput.value = "";
   tileTypeSelect.value = "placeholder";
-  tileThumbnailInput.value = "images/default-page.jpg";
-  tileThumbnailPreview.src = "images/default-page.jpg";
+  tileThumbnailInput.value = "";
+  tileThumbnailPreview.src = getDefaultTileImagePath();
   tileDestinationInput.value = "";
 
   updateTileDestinationField();
@@ -562,7 +563,7 @@ function createTile(event) {
 
   const label = tileNameInput.value.trim();
   const type = tileTypeSelect.value;
-  const image = tileThumbnailInput.value.trim() || "images/default-page.jpg";
+  const image = tileThumbnailInput.value.trim();
   const target = type === "placeholder" ? "" : tileDestinationInput.value.trim();
 
   if (!label) {
@@ -621,7 +622,7 @@ function openImagePickerDialog() {
   if (selectedImagePath) {
     updateImagePickerSelection(selectedImagePath);
   } else {
-    imagePickerPreview.src = "images/default-page.jpg";
+    imagePickerPreview.src = getDefaultTileImagePath();
     imagePickerFileName.textContent = "No image selected";
     selectImageButton.disabled = true;
   }
@@ -683,7 +684,7 @@ function renderImagePickerList() {
 function updateImagePickerSelection(imagePath) {
   selectedImagePath = imagePath;
 
-  imagePickerPreview.src = imagePath;
+  imagePickerPreview.src = getImagePath(imagePath);
   imagePickerFileName.textContent = getImageFileName(imagePath);
   selectImageButton.disabled = false;
 
@@ -716,7 +717,7 @@ function applySelectedImage() {
   }
 
   tileThumbnailInput.value = selectedImagePath;
-  tileThumbnailPreview.src = selectedImagePath;
+  tileThumbnailPreview.src = getImagePath(selectedImagePath);
 
   closeImagePickerDialog();
 }

@@ -11,6 +11,7 @@ const CONTENT_ENTRY_TYPES = new Set([
   "powerpoint",
   "image",
   "information",
+  "placeholder",
 ]);
 
 export function renderLayout(context) {

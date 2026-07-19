@@ -54,17 +54,13 @@
       </noscript>
     </main>
 
-    <dialog
-      id="teacherPasswordDialog"
-      class="password-dialog"
-      aria-labelledby="teacherPasswordTitle"
-    >
-      <form id="teacherPasswordForm" class="password-form" method="dialog">
-        <h2 id="teacherPasswordTitle" class="password-title">Password:</h2>
+    <dialog id="teacherPasswordDialog" class="app-dialog" aria-labelledby="teacherPasswordTitle">
+      <form id="teacherPasswordForm" class="dialog-form" method="dialog">
+        <h2 id="teacherPasswordTitle" class="dialog-title">Password:</h2>
 
         <input
           id="teacherPasswordInput"
-          class="password-input"
+          class="dialog-input"
           type="password"
           autocomplete="off"
           aria-label="Teacher Mode password"
@@ -72,7 +68,7 @@
 
         <p
           id="teacherPasswordFeedback"
-          class="password-feedback"
+          class="dialog-feedback"
           role="alert"
           aria-live="assertive"
           hidden
@@ -80,7 +76,7 @@
           Password Incorrect
         </p>
 
-        <div class="password-actions">
+        <div class="dialog-actions">
           <button
             id="cancelTeacherPasswordButton"
             class="dialog-button dialog-button-secondary"
@@ -119,6 +115,35 @@
 
         <div class="video-container">
           <div id="youtubePlayer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="pdfModal"
+      class="pdf-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pdfTitle"
+      hidden
+    >
+      <div class="pdf-dialog">
+        <div class="pdf-header">
+          <h2 id="pdfTitle" class="pdf-title">PDF</h2>
+
+          <button
+            id="closePdfButton"
+            class="close-pdf-button"
+            type="button"
+            aria-label="Close the PDF and return to the classroom page"
+          >
+            <span aria-hidden="true">✕</span>
+            <span>Close</span>
+          </button>
+        </div>
+
+        <div class="pdf-container">
+          <iframe id="pdfFrame" class="pdf-frame" title="PDF viewer"></iframe>
         </div>
       </div>
     </div>

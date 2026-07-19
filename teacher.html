@@ -102,21 +102,21 @@
       </footer>
     </main>
 
-    <dialog id="add-subpage-dialog" class="password-dialog" aria-labelledby="add-subpage-title">
-      <form id="add-subpage-form" class="password-form" method="dialog">
-        <h2 id="add-subpage-title" class="password-title">Add Subpage</h2>
+    <dialog id="add-subpage-dialog" class="app-dialog" aria-labelledby="add-subpage-title">
+      <form id="add-subpage-form" class="dialog-form" method="dialog">
+        <h2 id="add-subpage-title" class="dialog-title">Add Subpage</h2>
 
         <label for="subpage-name-input">Page Name:</label>
 
         <input
           id="subpage-name-input"
-          class="password-input"
+          class="dialog-input"
           type="text"
           autocomplete="off"
           required
         />
 
-        <div class="password-actions">
+        <div class="dialog-actions">
           <button
             id="cancel-add-subpage-button"
             class="dialog-button dialog-button-secondary"
@@ -130,13 +130,13 @@
       </form>
     </dialog>
 
-    <dialog id="message-dialog" class="password-dialog" aria-labelledby="message-dialog-title">
-      <div class="password-form">
-        <h2 id="message-dialog-title" class="password-title">Message</h2>
+    <dialog id="message-dialog" class="app-dialog" aria-labelledby="message-dialog-title">
+      <div class="dialog-form">
+        <h2 id="message-dialog-title" class="dialog-title">Message</h2>
 
         <p id="message-dialog-text" class="teacher-message-text"></p>
 
-        <div class="password-actions">
+        <div class="dialog-actions">
           <button
             id="message-dialog-cancel-button"
             class="dialog-button dialog-button-secondary"
@@ -157,21 +157,15 @@
       </div>
     </dialog>
 
-    <dialog id="add-tile-dialog" class="password-dialog" aria-labelledby="add-tile-title">
-      <form id="add-tile-form" class="password-form" method="dialog">
-        <h2 id="add-tile-title" class="password-title">Add Tile</h2>
+    <dialog id="add-tile-dialog" class="app-dialog" aria-labelledby="add-tile-title">
+      <form id="add-tile-form" class="dialog-form" method="dialog">
+        <h2 id="add-tile-title" class="dialog-title">Add Tile</h2>
 
         <label for="tile-name-input">Name:</label>
-        <input
-          id="tile-name-input"
-          class="password-input"
-          type="text"
-          autocomplete="off"
-          required
-        />
+        <input id="tile-name-input" class="dialog-input" type="text" autocomplete="off" required />
 
         <label for="tile-type-select">Type:</label>
-        <select id="tile-type-select" class="password-input">
+        <select id="tile-type-select" class="dialog-input">
           <option value="placeholder">Placeholder</option>
           <option value="video">Video</option>
           <option value="website">Website</option>
@@ -188,7 +182,7 @@
             <img
               id="tile-thumbnail-preview"
               class="tile-thumbnail-preview"
-              src="images/default-page.jpg"
+              src="resources/default-tile.jpg"
               alt="Selected tile image"
             />
           </div>
@@ -196,9 +190,9 @@
           <div>
             <input
               id="tile-thumbnail-input"
-              class="password-input"
+              class="dialog-input"
               type="text"
-              value="images/default-page.jpg"
+              value="resources/default-tile.jpg"
               readonly
             />
 
@@ -215,15 +209,10 @@
         <div id="tile-destination-group" hidden>
           <label id="tile-destination-label" for="tile-destination-input"> Destination: </label>
 
-          <input
-            id="tile-destination-input"
-            class="password-input"
-            type="text"
-            autocomplete="off"
-          />
+          <input id="tile-destination-input" class="dialog-input" type="text" autocomplete="off" />
         </div>
 
-        <div class="password-actions">
+        <div class="dialog-actions">
           <button
             id="cancel-add-tile-button"
             class="dialog-button dialog-button-secondary"
@@ -237,20 +226,20 @@
       </form>
     </dialog>
 
-    <dialog id="add-separator-dialog" class="password-dialog" aria-labelledby="add-separator-title">
-      <form id="add-separator-form" class="password-form" method="dialog">
-        <h2 id="add-separator-title" class="password-title">Add Separator</h2>
+    <dialog id="add-separator-dialog" class="app-dialog" aria-labelledby="add-separator-title">
+      <form id="add-separator-form" class="dialog-form" method="dialog">
+        <h2 id="add-separator-title" class="dialog-title">Add Separator</h2>
 
         <label for="separator-name-input">Name:</label>
         <input
           id="separator-name-input"
-          class="password-input"
+          class="dialog-input"
           type="text"
           autocomplete="off"
           required
         />
 
-        <div class="password-actions">
+        <div class="dialog-actions">
           <button
             id="cancel-add-separator-button"
             class="dialog-button dialog-button-secondary"
@@ -266,11 +255,11 @@
 
     <dialog
       id="image-picker-dialog"
-      class="password-dialog image-picker-dialog"
+      class="app-dialog image-picker-dialog"
       aria-labelledby="image-picker-title"
     >
-      <form id="image-picker-form" class="password-form" method="dialog">
-        <h2 id="image-picker-title" class="password-title">Choose Image</h2>
+      <form id="image-picker-form" class="dialog-form" method="dialog">
+        <h2 id="image-picker-title" class="dialog-title">Choose Image</h2>
 
         <div class="image-picker-layout">
           <section class="image-picker-list-panel">
@@ -278,7 +267,7 @@
 
             <input
               id="image-search-input"
-              class="password-input"
+              class="dialog-input"
               type="search"
               autocomplete="off"
               placeholder="Type part of the filename"
@@ -299,7 +288,7 @@
               <img
                 id="image-picker-preview"
                 class="image-picker-preview"
-                src="images/default-page.jpg"
+                src="resources/default-tile.jpg"
                 alt=""
               />
             </div>
@@ -308,7 +297,7 @@
           </section>
         </div>
 
-        <div class="password-actions">
+        <div class="dialog-actions">
           <button
             id="cancel-image-picker-button"
             class="dialog-button dialog-button-secondary"
@@ -330,7 +319,7 @@
     </dialog>
 
     <script src="data.js"></script>
-    <script src="images/image-catalog.js"></script>
+    <script src="assets/images/catalog.js"></script>
     <script type="module" src="teacher.js"></script>
   </body>
 </html>

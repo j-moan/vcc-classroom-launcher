@@ -9,6 +9,7 @@ const SUPPORTED_LAYOUT_TYPES = new Set([
   "powerpoint",
   "image",
   "information",
+  "placeholder",
 ]);
 
 const CONTENT_TYPES_REQUIRING_TARGET = new Set(["video", "website", "pdf", "powerpoint", "image"]);

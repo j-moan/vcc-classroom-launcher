@@ -4,8 +4,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const projectRoot = path.resolve(__dirname, "..");
-const imagesFolder = path.join(projectRoot, "images");
-const outputFile = path.join(imagesFolder, "image-catalog.js");
+const imagesFolder = path.join(projectRoot, "assets", "images");
+const outputFile = path.join(imagesFolder, "catalog.js");
 
 function buildImageCatalog() {
   if (!fs.existsSync(imagesFolder)) {
@@ -19,7 +19,7 @@ function buildImageCatalog() {
     .filter((fileName) => /\.jpg$/i.test(fileName))
     .sort((a, b) => a.localeCompare(b));
 
-  const imagePaths = imageFiles.map((fileName) => `images/${fileName}`);
+  const imagePaths = imageFiles;
 
   const catalogContents = `"use strict";
 

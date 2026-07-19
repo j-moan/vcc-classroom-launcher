@@ -1,5 +1,7 @@
 "use strict";
 
+import { getImagePath } from "../utilities/asset-paths.js";
+
 const ASSET_TIMEOUT_MS = 5000;
 
 export async function validateAssets(project) {
@@ -48,8 +50,11 @@ function collectImageReferences(project) {
         return;
       }
 
+      const fileName = entry.image.trim();
+
       references.push({
-        path: entry.image.trim(),
+        path: getImagePath(fileName),
+        fileName,
         containerId,
         entryIndex,
         entryType: entry.type || "unknown",

@@ -4,6 +4,7 @@ import { renderLayout } from "./renderers/layout-renderer.js";
 import { validateProject } from "./validators/project-validator.js";
 import { validateAssets } from "./validators/asset-validator.js";
 import { loadProject, ProjectLoadError } from "./project/project-loader.js";
+import { openVideo, closeVideo } from "./actions/video-action.js";
 
 const TEACHER_PASSWORD = "class";
 const DEFAULT_COLUMNS = 8;
@@ -28,6 +29,11 @@ const elements = {
   teacherPasswordInput: document.getElementById("teacherPasswordInput"),
   teacherPasswordFeedback: document.getElementById("teacherPasswordFeedback"),
   cancelTeacherPasswordButton: document.getElementById("cancelTeacherPasswordButton"),
+
+  videoModal: document.getElementById("videoModal"),
+  videoTitle: document.getElementById("videoTitle"),
+  youtubePlayerElement: document.getElementById("youtubePlayer"),
+  closeVideoButton: document.getElementById("closeVideoButton"),
 
   messageBox: document.getElementById("messageBox"),
 };
@@ -221,7 +227,7 @@ function submitTeacherPassword(event) {
 function showIncorrectPassword() {
   clearPasswordErrorTimer();
 
-  elements.teacherPasswordForm.classList.add("password-error");
+  elements.teacherPasswordForm.classList.add("dialog-error");
   elements.teacherPasswordFeedback.hidden = false;
   elements.teacherPasswordInput.value = "";
   elements.teacherPasswordInput.disabled = true;
@@ -240,7 +246,7 @@ function showIncorrectPassword() {
 }
 
 function resetTeacherPasswordDialog() {
-  elements.teacherPasswordForm.classList.remove("password-error");
+  elements.teacherPasswordForm.classList.remove("dialog-error");
   elements.teacherPasswordFeedback.hidden = true;
   elements.teacherPasswordInput.disabled = false;
   elements.teacherPasswordInput.value = "";
@@ -262,19 +268,20 @@ function clearPasswordErrorTimer() {
 function handleContentAction(entry) {
   switch (entry.type) {
     case "video":
-      showMessage(`Video selected: ${getEntryLabel(entry)}`);
+      openVideo(entry, elements).catch((error) => {
+        showMessage(error.message);
+      });
       break;
-
     case "information":
       break;
-
     case "website":
     case "pdf":
     case "powerpoint":
     case "image":
       showMessage(`${getEntryLabel(entry)} selected.`);
       break;
-
+    case "placeholder":
+      break;
     default:
       showMessage(`Unsupported content type: ${entry.type}`);
   }
@@ -308,16 +315,20 @@ function showMessage(message) {
 
 elements.homeButton.addEventListener("click", navigateHome);
 elements.backButton.addEventListener("click", navigateBack);
-
 elements.teacherButton.addEventListener("click", openTeacherPasswordDialog);
-
 elements.teacherPasswordForm.addEventListener("submit", submitTeacherPassword);
-
 elements.cancelTeacherPasswordButton.addEventListener("click", closeTeacherPasswordDialog);
-
 elements.teacherPasswordDialog.addEventListener("cancel", (event) => {
   event.preventDefault();
   closeTeacherPasswordDialog();
+});
+elements.closeVideoButton.addEventListener("click", () => {
+  closeVideo(elements);
+});
+elements.videoModal.addEventListener("click", (event) => {
+  if (event.target === elements.videoModal) {
+    closeVideo(elements);
+  }
 });
 
 void initialize();

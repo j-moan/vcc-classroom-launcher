@@ -1,0 +1,3 @@
+to reset the web UI to data.js use the following in the debug consule:
+localStorage.clear();
+location.reload();

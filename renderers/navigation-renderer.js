@@ -1,5 +1,6 @@
 "use strict";
 
+import { getImagePath, getDefaultTileImagePath } from "../utilities/asset-paths.js";
 import { createTile } from "./tile-renderer.js";
 
 export function renderNavigationEntry(entry, context) {
@@ -28,7 +29,7 @@ export function renderNavigationEntry(entry, context) {
 
   return createTile({
     label: childContainer.title || "Untitled",
-    image: entry.image,
+    image: entry.image ? getImagePath(entry.image) : getDefaultTileImagePath(),
     onSelect: () => onNavigate(entry.container),
   });
 }
