@@ -17,12 +17,12 @@
     <header class="site-header">
       <div class="teacher-access-buttons">
         <button
-          id="publish-button"
+          id="preview-button"
           class="publish-button"
           type="button"
-          aria-label="Publish and Return to Student View"
+          aria-label="Preview Current Draft"
         >
-          Publish
+          Preview
         </button>
       </div>
 
@@ -91,11 +91,13 @@
         <!-- B9 -  -->
         <button class="teacher-tool-button" type="button">B9</button>
 
-        <!-- B10 -->
-        <button class="teacher-tool-button" type="button">B10</button>
+        <!-- B10 - Catalog Assets -->
+        <button id="catalog-assets-button" class="teacher-tool-button" type="button">
+          Catalog Assets
+        </button>
 
-        <!-- B11 -->
-        <button class="teacher-tool-button" type="button">B11</button>
+        <!-- B11 - Publish -->
+        <button id="publish-button" class="teacher-tool-button" type="button">Publish</button>
 
         <!-- B12 - Publish -->
         <button class="teacher-tool-button" type="button">B12</button>
@@ -364,7 +366,8 @@
       </form>
     </dialog>
 
-    <script src="data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="assets/data/data.js"></script>
     <script src="assets/images/catalog.js"></script>
     <script src="assets/pdfs/catalog.js"></script>
     <script type="module" src="teacher.js"></script>

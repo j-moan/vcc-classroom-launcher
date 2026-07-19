@@ -2,14 +2,11 @@
 
 import { loadProject } from "./project/project-loader.js";
 import { ProjectModel } from "./models/project-model.js";
-import {
-  loadWorkingProjectData,
-  saveWorkingProjectData,
-  publishProject,
-} from "./project/project-storage.js";
+import { loadWorkingProjectData, saveWorkingProjectData } from "./project/project-storage.js";
 import { getImagePath, getDefaultTileImagePath } from "./utilities/asset-paths.js";
 
 const publishButton = document.querySelector("#publish-button");
+const previewButton = document.querySelector("#preview-button");
 const toolbarButtons = document.querySelectorAll(".teacher-tool-button");
 const containerTreeElement = document.querySelector("#containerTree");
 const addSubpageButton = document.querySelector("#add-subpage-button");
@@ -59,6 +56,7 @@ const pdfSearchInput = document.querySelector("#pdf-search-input");
 const pdfPickerList = document.querySelector("#pdf-picker-list");
 const cancelPdfPickerButton = document.querySelector("#cancel-pdf-picker-button");
 const selectPdfButton = document.querySelector("#select-pdf-button");
+const catalogAssetsButton = document.querySelector("#catalog-assets-button");
 
 let project = null;
 let selectedContainerId = null;
@@ -66,6 +64,7 @@ let selectedLayoutIndex = null;
 let renamingPage = false;
 let selectedImagePath = null;
 let selectedPdf = null;
+let assetsFolderHandle = null;
 
 async function initializeTeacherView() {
   try {
@@ -330,21 +329,6 @@ function showTreeMessage(message) {
 
   containerTreeElement.appendChild(messageElement);
 }
-
-publishButton.addEventListener("click", () => {
-  publishProject(project.toObject());
-  window.location.href = "student.html";
-});
-
-toolbarButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    button.classList.add("active");
-
-    window.setTimeout(() => {
-      button.classList.remove("active");
-    }, 1000);
-  });
-});
 
 function openAddSubpageDialog() {
   renamingPage = false;
@@ -977,10 +961,110 @@ function showTeacherConfirmation(message, title = "Confirm") {
   });
 }
 
+function createDataFileContents(projectData) {
+  return `"use strict";
+
+window.CLASSROOM_SITE = ${JSON.stringify(projectData, null, 2)};
+`;
+}
+
+async function getAssetsFolder() {
+  if (assetsFolderHandle) {
+    return assetsFolderHandle;
+  }
+
+  if (!window.showDirectoryPicker) {
+    throw new Error("Folder access is not supported. Use Chrome or Edge to run Teacher Mode.");
+  }
+
+  assetsFolderHandle = await window.showDirectoryPicker({
+    mode: "readwrite",
+  });
+
+  if (assetsFolderHandle.name !== "assets") {
+    assetsFolderHandle = null;
+    throw new Error('Please select the folder named "assets".');
+  }
+
+  return assetsFolderHandle;
+}
+
+async function listAssets(folderHandle, indent = "") {
+  for await (const entry of folderHandle.values()) {
+    if (entry.kind === "directory") {
+      console.log(`${indent}${entry.name}/`);
+      await listAssets(entry, `${indent}    `);
+    } else {
+      console.log(`${indent}${entry.name}`);
+    }
+  }
+}
+
+async function buildAssetCatalogs(assetsFolder) {
+  const catalogs = {};
+
+  for await (const folder of assetsFolder.values()) {
+    if (folder.kind !== "directory") {
+      continue;
+    }
+
+    if (folder.name === "data" || folder.name.startsWith(".")) {
+      continue;
+    }
+
+    catalogs[folder.name] = [];
+
+    for await (const entry of folder.values()) {
+      if (entry.kind !== "file") {
+        continue;
+      }
+
+      if (entry.name === "catalog.js") {
+        continue;
+      }
+
+      catalogs[folder.name].push(entry.name);
+    }
+
+    catalogs[folder.name].sort((a, b) => a.localeCompare(b));
+  }
+
+  return catalogs;
+}
+
+function createCatalogFileContents(folderName, filenames) {
+  const globalName = `CLASSROOM_${folderName.toUpperCase()}`;
+
+  return `"use strict";
+
+window.${globalName} = ${JSON.stringify(filenames, null, 2)};
+`;
+}
+
+async function writeCatalogFiles(assetsFolder, catalogs) {
+  for (const [folderName, filenames] of Object.entries(catalogs)) {
+    const folderHandle = await assetsFolder.getDirectoryHandle(folderName);
+
+    const catalogFileHandle = await folderHandle.getFileHandle("catalog.js", {
+      create: true,
+    });
+
+    const writable = await catalogFileHandle.createWritable();
+
+    await writable.write(createCatalogFileContents(folderName, filenames));
+
+    await writable.close();
+  }
+}
+
 /* =========================================================
    Event Listeners
    ========================================================= */
 
+previewButton.addEventListener("click", () => {
+  saveWorkingProjectData(project.toObject());
+  window.location.href = "student.html?preview=true";
+});
 addSubpageButton.addEventListener("click", openAddSubpageDialog);
 addSubpageForm.addEventListener("submit", createSubpage);
 cancelAddSubpageButton.addEventListener("click", closeAddSubpageDialog);
@@ -1049,6 +1133,54 @@ pdfPickerForm.addEventListener("submit", (event) => {
 pdfPickerDialog.addEventListener("cancel", (event) => {
   event.preventDefault();
   closePdfPickerDialog();
+});
+publishButton.addEventListener("click", async () => {
+  const zip = new JSZip();
+
+  zip.file("assets/data/data.js", createDataFileContents(project.toObject()));
+
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+
+  const downloadUrl = URL.createObjectURL(zipBlob);
+  const downloadLink = document.createElement("a");
+
+  downloadLink.href = downloadUrl;
+  downloadLink.download = "assets.zip";
+
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+
+  URL.revokeObjectURL(downloadUrl);
+});
+toolbarButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    button.classList.add("active");
+
+    window.setTimeout(() => {
+      button.classList.remove("active");
+    }, 1000);
+  });
+});
+catalogAssetsButton.addEventListener("click", async () => {
+  try {
+    const assetsFolder = await getAssetsFolder();
+
+    console.log("Cataloging assets...");
+    const catalogs = await buildAssetCatalogs(assetsFolder);
+    await writeCatalogFiles(assetsFolder, catalogs);
+    console.log(catalogs);
+
+    for (const [folderName, filenames] of Object.entries(catalogs)) {
+      console.log(`${folderName}/catalog.js`, createCatalogFileContents(folderName, filenames));
+    }
+  } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
+
+    console.error("Assets folder could not be selected.", error);
+  }
 });
 
 void initializeTeacherView();

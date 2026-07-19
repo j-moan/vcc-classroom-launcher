@@ -6,10 +6,13 @@ import { validateAssets } from "./validators/asset-validator.js";
 import { loadProject, ProjectLoadError } from "./project/project-loader.js";
 import { openVideo, closeVideo } from "./actions/video-action.js";
 import { openPdf, closePdf } from "./actions/pdf-action.js";
+import { ProjectModel } from "./models/project-model.js";
+import { loadWorkingProjectData } from "./project/project-storage.js";
 
 const TEACHER_PASSWORD = "class";
 const DEFAULT_COLUMNS = 8;
 const PASSWORD_ERROR_DURATION = 1000;
+const isPreview = new URLSearchParams(window.location.search).get("preview") === "true";
 
 let project = null;
 let currentContainerId = null;
@@ -46,7 +49,10 @@ const elements = {
 
 async function initialize() {
   try {
-    project = await loadProject();
+    const isPreview = new URLSearchParams(window.location.search).get("preview") === "true";
+    const workingProjectData = isPreview ? loadWorkingProjectData() : null;
+
+    project = workingProjectData ? new ProjectModel(workingProjectData) : await loadProject();
   } catch (error) {
     handleProjectLoadFailure(error);
     return;
@@ -327,7 +333,14 @@ function showMessage(message) {
 
 elements.homeButton.addEventListener("click", navigateHome);
 elements.backButton.addEventListener("click", navigateBack);
-elements.teacherButton.addEventListener("click", openTeacherPasswordDialog);
+elements.teacherButton.addEventListener("click", () => {
+  if (isPreview) {
+    window.location.href = "teacher.html";
+    return;
+  }
+
+  openTeacherPasswordDialog();
+});
 elements.teacherPasswordForm.addEventListener("submit", submitTeacherPassword);
 elements.cancelTeacherPasswordButton.addEventListener("click", closeTeacherPasswordDialog);
 elements.teacherPasswordDialog.addEventListener("cancel", (event) => {
