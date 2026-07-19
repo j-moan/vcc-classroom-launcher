@@ -2,287 +2,230 @@
 
 # Project Roadmap
 
-**Version:** 2.0 (Draft)
-
-**Status:** Current
-
-**Last Updated:** July 2026
-
----
-
-# Purpose
+## Purpose
 
 This roadmap describes the planned evolution of the VCC Classroom Launcher.
 
-The roadmap follows the architectural layering defined in **Software Architecture.md**.
+Rather than listing individual implementation tasks, it identifies the major capabilities that will be added as the application matures.
 
-Each phase builds upon the previous phase while keeping the application operational whenever practical.
+Each milestone should leave the application in a usable, working state.
 
----
-
-# Phase 1 — Foundation ✅
-
-**Status:** Complete
-
-## Goals
-
-- Git repository
-- GitHub Pages
-- Development environment
-- Single Page Application
-- Initial documentation
-- Student interface shell
-- Header
-- Home navigation
-- Back navigation
-
-## Deliverable
-
-Working browser application.
+Development should continue following the project's documentation-first philosophy.
 
 ---
 
-# Phase 2 — Project Architecture ✅
+# Guiding Principles
 
-**Status:** Complete
+Every milestone should:
 
-## Goals
-
-- Container architecture
-- Layout architecture
-- Navigation model
-- Project documentation
-- Modular data model
-- Student navigation
-- Container/Layout rendering
-
-## Deliverable
-
-Stable project architecture.
+- Preserve the documented architecture.
+- Maintain a working application.
+- Build upon existing systems.
+- Prefer extending existing functionality over replacing it.
+- Keep Student Mode operational whenever practical.
 
 ---
 
-# Phase 3 — Runtime Architecture ✅
+# Milestone 1 — Student Runtime ✅
 
-**Status:** Complete
+## Status
 
-## Goals
+Complete
 
-- Project Loader
-- Structural Validator
-- Asset Validator
-- Modular renderers
-- Application controller
-- Graceful asset fallback
-- Runtime separation of responsibilities
+## Major Capabilities
 
-## Deliverable
+- Student application shell
+- Classroom navigation
+- Container hierarchy
+- Layout rendering
+- Runtime architecture
+- Modular content actions
+- Asset management
+- Validation
+- Graceful fallbacks
 
-Stable Student Mode runtime.
+## Result
 
----
-
-# Phase 4 — Student Launcher
-
-**Status:** In Progress
-
-## Goals
-
-- YouTube support
-- Local video support
-- Website support
-- PDF support
-- PowerPoint support
-- Image support
-- Information entries
-- Responsive layout
-- Final student UI polish
-
-## Deliverable
-
-Complete Student Mode suitable for daily classroom use.
+Student Mode is capable of presenting classroom projects using the current published Project.
 
 ---
 
-# Phase 5 — Project Model
+# Milestone 2 — Teacher Foundation 🔄
 
-**Status:** Planned
+## Status
 
-## Goals
+In Progress
 
-- Project Model
-- Project operations
-- Undo-ready architecture
-- Editing API
-- Serialization model
-- Project integrity management
-
-## Deliverable
-
-Editable Project Model independent of storage format.
-
----
-
-# Phase 6 — Teacher Mode Foundation
-
-**Status:** Planned
-
-## Goals
+## Major Capabilities
 
 - Teacher application shell
-- Container Tree
-- Layout Editor
-- Properties panel
-- Continuous validation
-- Student Preview
+- Authentication
+- Teacher navigation
+- Project loading
+- Project Model editing
+- Basic page management
+- Shared runtime components
 
-## Deliverable
+## Result
 
-Basic visual editor.
+Teachers can begin editing classroom projects without modifying source code.
 
 ---
 
-# Phase 7 — Asset Library
+# Milestone 3 — Classroom Editor
 
-**Status:** Planned
+## Planned Capabilities
 
-## Goals
+- Container Tree
+- Page Layout editor
+- Property editing
+- Continuous validation
+- Integrated Student Preview
+
+## Result
+
+Teachers can visually build and organize classroom pages.
+
+---
+
+# Milestone 4 — Asset Management
+
+## Planned Capabilities
 
 - Image management
 - Video management
-- Document management
-- Presentation management
-- Asset picker
+- PDF management
+- PowerPoint management
+- Asset catalogs
+- Asset pickers
 - Asset reuse
 
-## Deliverable
+## Result
 
-Teachers no longer manage classroom assets manually.
+Teachers manage classroom resources entirely within the editor.
 
 ---
 
-# Phase 8 — Editing Experience
+# Milestone 5 — Editing Experience
 
-**Status:** Planned
-
-## Goals
+## Planned Capabilities
 
 - Drag and drop
 - Context menus
 - Duplicate
-- Copy / Paste
+- Copy and Paste
 - Undo / Redo
+- Multi-selection
 - Keyboard shortcuts
-- Search
-- Multi-select
-- Recent assets
-- Favorites
 
-## Deliverable
+## Result
 
-Highly productive editing environment.
+Teacher Mode becomes a productive classroom authoring environment.
 
 ---
 
-# Phase 9 — Project Persistence
+# Milestone 6 — Publishing
 
-**Status:** Planned
+## Planned Capabilities
 
-## Goals
-
-- project-data.json
-- Import Project
-- Export Project
+- Project validation
 - Project serialization
-- Project loading
-- Multiple projects
+- Published project generation
+- Configurable publishing destinations
 
-## Deliverable
+Initial publishing may include:
 
-Portable classroom projects.
+- Download
+- Manual deployment
 
----
+Future publishing may include:
 
-# Phase 10 — Publishing
+- Classroom server
+- District deployment
+- Cloud publishing
 
-**Status:** Planned
+## Result
 
-## Goals
-
-- Publish validation
-- Asset verification
-- Project generation
-- Git integration
-- GitHub Pages deployment
-
-## Deliverable
-
-One-click publishing.
+Teachers can publish classroom projects without understanding deployment.
 
 ---
 
-# Phase 11 — Version 1.0
+# Milestone 7 — Classroom Appliance
 
-**Status:** Planned
+## Planned Capabilities
 
-## Goals
+- Classroom Mini-PC hosting
+- Local Student Mode
+- Local Teacher Mode
+- Local publishing
+- Local asset storage
 
-- Classroom testing
-- Performance tuning
-- Accessibility review
-- Documentation review
-- Bug fixing
-- Final UI polish
+## Result
 
-## Deliverable
-
-Production-ready classroom platform.
+The classroom operates independently of GitHub and external hosting.
 
 ---
 
-# Long-Term Enhancements
+# Milestone 8 — Classroom Platform
+
+## Planned Capabilities
+
+- Multiple classroom projects
+- Shared asset libraries
+- Templates
+- Automatic backups
+- Version history
+- User accounts
+- Classroom management
+
+## Result
+
+The application evolves from a classroom launcher into a complete classroom authoring platform.
+
+---
+
+# Long-Term Opportunities
 
 Potential future enhancements include:
 
-- Cloud project storage
-- Shared classroom libraries
-- District deployment
-- User accounts
-- Classroom templates
-- Theme support
-- AI-assisted classroom creation
-- Analytics
-- Multi-language support
+- Cloud synchronization
+- District-wide deployment
 - Collaborative editing
-- Version history
+- Classroom analytics
+- AI-assisted classroom creation
+- Localization
+- Accessibility enhancements
+- Theme support
+
+These enhancements should extend the existing architecture rather than replace it.
 
 ---
 
 # Current Progress
 
-| Phase                   | Status         |
-| ----------------------- | -------------- |
-| Foundation              | ✅ Complete    |
-| Project Architecture    | ✅ Complete    |
-| Runtime Architecture    | ✅ Complete    |
-| Student Launcher        | 🔄 In Progress |
-| Project Model           | Planned        |
-| Teacher Mode Foundation | Planned        |
-| Asset Library           | Planned        |
-| Editing Experience      | Planned        |
-| Project Persistence     | Planned        |
-| Publishing              | Planned        |
-| Version 1.0             | Planned        |
+| Milestone           | Status         |
+| ------------------- | -------------- |
+| Student Runtime     | ✅ Complete    |
+| Teacher Foundation  | 🔄 In Progress |
+| Classroom Editor    | Planned        |
+| Asset Management    | Planned        |
+| Editing Experience  | Planned        |
+| Publishing          | Planned        |
+| Classroom Appliance | Planned        |
+| Classroom Platform  | Planned        |
 
 ---
 
-# Guiding Principle
+# Success Criteria
 
-Each phase should leave the project in a working state.
+The project will be considered complete when a teacher can:
 
-Whenever practical:
+- Create a classroom.
+- Organize pages.
+- Add classroom content.
+- Manage classroom assets.
+- Preview the classroom.
+- Publish the classroom.
+- Deploy the classroom without technical knowledge.
 
-- Documentation precedes implementation.
-- Validation precedes rendering.
-- Architecture precedes features.
-- Student Mode remains operational throughout development.
+At that point, the VCC Classroom Launcher will have achieved its original vision of allowing teachers to build rich classroom experiences without writing code or understanding the underlying implementation.

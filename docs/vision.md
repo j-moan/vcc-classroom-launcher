@@ -2,38 +2,39 @@
 
 # Vision
 
-**Version:** 2.0 (Draft)
+## Purpose
 
-**Status:** Current
+The VCC Classroom Launcher exists to make classroom technology simple, visual, and teacher-centered.
 
-**Last Updated:** July 2026
+Its purpose is to allow teachers to create engaging classroom experiences without requiring programming knowledge while providing students with a consistent, touch-friendly interface that allows them to focus on learning instead of technology.
 
----
+Teachers should think about teaching.
 
-# Purpose
+Students should think about learning.
 
-The VCC Classroom Launcher exists to make classroom technology easier for teachers to manage and easier for students to use.
-
-The platform provides a visual, touch-friendly classroom experience built around images, simple navigation, and predictable interaction.
-
-Students interact with classroom content.
-
-Teachers create and manage classroom experiences.
+The software should manage everything else.
 
 ---
 
-# Vision
+# Product Vision
 
-The long-term vision is to create a classroom authoring platform that allows teachers to organize, present, and maintain digital classroom resources without requiring technical knowledge.
+The VCC Classroom Launcher is intended to become a complete classroom authoring platform.
 
-Teachers should think in terms of:
+Teachers should be able to design, organize, publish, and maintain classroom content through a visual interface similar to familiar desktop applications.
 
-- classroom pages
-- activities
-- lessons
-- visual organization
+The application should feel more like Microsoft PowerPoint than a web development environment.
 
-They should never need to think about:
+Teachers should work with concepts such as:
+
+- Pages
+- Activities
+- Lessons
+- Images
+- Videos
+- Documents
+- Classroom organization
+
+They should never need to understand:
 
 - HTML
 - CSS
@@ -41,10 +42,10 @@ They should never need to think about:
 - JSON
 - Git
 - File paths
-- Web hosting
+- Web servers
 - Programming
 
-The software should manage those details automatically.
+Those implementation details belong to the software.
 
 ---
 
@@ -52,157 +53,247 @@ The software should manage those details automatically.
 
 ## Students
 
-Students use a simplified full-screen interface designed around visual navigation.
+Student Mode exists to present classroom content.
 
-Student Mode should provide:
+Students should experience:
 
-- Large visual tiles
-- Minimal text
-- Consistent navigation
-- Immediate touch feedback
-- No technical controls
-- No editing features
-- No unnecessary distractions
+- Large visual navigation
+- Simple, predictable layouts
+- Consistent Home and Back navigation
+- Fast response
+- Touch-friendly interaction
+- Minimal distractions
 
-Students should always know where they are and how to return home.
+Student Mode should never expose editing or technical functionality.
 
 ---
 
 ## Teachers
 
-Teachers use a visual classroom authoring environment.
+Teacher Mode exists to author classroom experiences.
 
-Teacher Mode should feel familiar to users of:
+Teachers should be able to:
 
-- Windows Explorer
-- Microsoft PowerPoint
-
-Teacher Mode should support creating classroom experiences without requiring programming knowledge.
+- Create classroom pages
+- Organize navigation
+- Manage classroom assets
+- Build activities
+- Preview classroom behavior
+- Validate projects
+- Publish classroom updates
 
 The editor should encourage experimentation while protecting teachers from creating invalid classroom projects.
 
 ---
 
-# Product Goals
-
-The platform should:
-
-- Make classroom resources easy to locate.
-- Reduce classroom technology complexity.
-- Support large interactive touch displays.
-- Support traditional desktop computers.
-- Keep student navigation simple and predictable.
-- Allow teachers to organize classroom resources visually.
-- Support reusable classroom assets.
-- Validate projects before publishing.
-- Publish classroom updates safely.
-- Preserve classroom content for future reuse.
-
----
-
-# Student Experience
-
-Student Mode should provide:
-
-- A visual landing page
-- Consistent page layouts
-- Image-and-label navigation
-- Fast navigation
-- Home and Back controls
-- Responsive touch interaction
-- Graceful handling of missing assets
-- Immediate access to classroom resources
-
-The interface should feel calm, predictable, and free from unnecessary controls.
-
-Students should interact with learning content rather than software.
-
----
-
-# Teacher Experience
-
-Teacher Mode should provide:
-
-- Visual Container Tree
-- Visual Layout Editor
-- Drag-and-drop editing
-- Property editing
-- Asset Library
-- Continuous validation
-- Student Preview
-- Publishing workflow
-
-The editor should encourage teachers to organize classrooms naturally rather than requiring them to understand implementation details.
-
----
-
-# Core Principles
-
-The platform is guided by several principles.
-
-## Visual First
-
-Images should communicate before text whenever practical.
-
----
+# Design Principles
 
 ## Teacher First
 
-The software should adapt to teachers.
+The software adapts to teachers.
 
-Teachers should never be expected to adapt to the software.
+Teachers should never need to adapt to the software.
 
 ---
 
 ## Student Simplicity
 
-Student Mode should expose only the controls required to complete classroom activities.
+Students should interact with learning content—not application controls.
+
+Every screen should be visually consistent and immediately understandable.
 
 ---
 
-## Reliability
+## Visual Communication
 
-The classroom should remain usable whenever practical.
+Images should communicate before text whenever practical.
 
-Missing resources should degrade gracefully rather than producing broken interfaces.
-
----
-
-## Consistency
-
-Navigation, presentation, and interaction should remain predictable throughout every classroom.
+Large touch targets and consistent layouts are more important than maximizing information density.
 
 ---
 
-## Extensibility
+## Separation of Responsibilities
 
-The platform should support future capabilities without requiring architectural redesign.
+Each subsystem should have a single responsibility.
+
+Examples include:
+
+- Rendering
+- Navigation
+- Asset management
+- Project storage
+- Validation
+- Publishing
+
+Implementation details should remain hidden behind well-defined interfaces.
 
 ---
 
-# Long-Term Vision
+## Evolution Without Rewrite
 
-The VCC Classroom Launcher is intended to become the foundation of the **Visual Communication for the Classroom (VCC)** platform.
+Architectural decisions should support future growth without requiring major redesign.
 
-Future versions may include:
+Future enhancements should replace individual components rather than requiring the application to be rewritten.
 
-- Classroom templates
+---
+
+# Architecture Vision
+
+The project is designed as a collection of independent systems.
+
+Each system should know only the information necessary to perform its responsibility.
+
+Storage, rendering, editing, validation, and publishing should remain independent of one another.
+
+This allows individual systems to evolve without affecting the rest of the application.
+
+---
+
+# Asset Architecture
+
+Application resources are intentionally separated from teacher-managed assets.
+
+```
+resources/
+    default-header.jpg
+    default-tile.jpg
+
+assets/
+    data/
+    images/
+    videos/
+    pdfs/
+    powerpoints/
+```
+
+## Resources
+
+Resources belong to the application.
+
+Examples include:
+
+- Default images
+- Built-in graphics
+- Static application assets
+
+Teachers do not manage these files.
+
+---
+
+## Assets
+
+Assets belong to classroom projects.
+
+Examples include:
+
+- Images
+- Videos
+- PDFs
+- PowerPoint presentations
+
+Teachers manage these assets through Teacher Mode.
+
+---
+
+# Project Data
+
+Project data should remain independent of storage location.
+
+Projects store only logical information.
+
+Examples:
+
+```json
+{
+  "image": "alphabet.jpg",
+  "target": "reading-centers.pdf"
+}
+```
+
+Projects never contain storage-specific paths.
+
+Renderer helper functions resolve filenames into their physical locations.
+
+Changing where assets are stored should never require changing project data.
+
+---
+
+# Publishing
+
+Editing and publishing are separate responsibilities.
+
+Teacher Mode edits a working project.
+
+Publishing distributes that project.
+
+Teacher Mode should never need to know where published projects are stored.
+
+Instead, publishing should occur through a publishing interface that can evolve independently of the editor.
+
+---
+
+# Publishing Roadmap
+
+## Initial Deployment
+
+Teacher Mode maintains a working project using browser storage.
+
+Publishing performs two actions:
+
+- Updates the local working project.
+- Generates a replacement `assets/data/data.js` file for distribution.
+
+This allows classroom updates to be shared without requiring server infrastructure.
+
+---
+
+## Local Classroom Server
+
+The long-term deployment target is a dedicated classroom Mini-PC.
+
+The Mini-PC becomes the classroom server and hosts:
+
+- Student website
+- Teacher website
+- Project data
+- Classroom assets
+- Authentication
+- Backups
+- Future classroom services
+
+Publishing should eventually replace the generated `data.js` file directly on the server without changing the Teacher Mode workflow.
+
+The teacher experience should remain unchanged regardless of where published data is stored.
+
+---
+
+## Future Expansion
+
+The architecture should naturally support future capabilities including:
+
+- Multiple teachers
+- Authentication
 - Shared classroom libraries
-- Portable classroom projects
-- Asset libraries
-- Import / Export
 - Multiple classroom projects
+- Asset libraries
+- Import and Export
+- Classroom templates
+- Student analytics
+- District deployment
 - Cloud synchronization
-- District-wide deployment
 - Collaborative editing
 
-The long-term objective is not simply to launch classroom resources.
-
-The objective is to provide teachers with an intuitive platform for designing, organizing, and presenting engaging classroom experiences.
+These features should extend the existing architecture rather than replace it.
 
 ---
 
-# Guiding Principle
+# Long-Term Goal
+
+The VCC Classroom Launcher is not simply a classroom website.
+
+It is a classroom authoring platform.
+
+Its purpose is to allow teachers to build engaging classroom experiences while hiding the underlying technology.
 
 Students should experience learning—not software.
 

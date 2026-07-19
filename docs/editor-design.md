@@ -2,332 +2,188 @@
 
 # Editor Design
 
-**Version:** 2.0 (Draft)
+## Purpose
 
-**Status:** Current
+This document defines the design of Teacher Mode.
 
-**Last Updated:** July 2026
+Teacher Mode is the classroom authoring environment used to create and maintain classroom Projects.
 
----
+Unlike the Architecture document, which defines software organization, this document defines how teachers interact with the editor.
 
-# Purpose
-
-The VCC Classroom Editor is the visual authoring environment used to create and maintain classroom Projects.
-
-Teacher Mode allows educators to build classroom experiences without requiring knowledge of programming, HTML, JSON, Git, or GitHub.
-
-The editor is responsible for editing a Project Model.
-
-The runtime is responsible for presenting that Project to students.
+Its purpose is to ensure that Teacher Mode remains simple, predictable, and focused on classroom authoring rather than software development.
 
 ---
 
-# Vision
+# Design Philosophy
 
-The editor should feel familiar to anyone who has used:
+Teacher Mode should allow teachers to think about classrooms rather than technology.
 
-- Windows Explorer
-- Microsoft PowerPoint
+Teachers should organize:
 
-The editor should never feel like:
+- Pages
+- Activities
+- Resources
+- Classroom structure
 
-- A website builder
-- A programming environment
-- A file management utility
-- A development tool
+Teachers should never need to understand:
 
-Teachers should focus entirely on classroom organization and content.
+- HTML
+- JavaScript
+- JSON
+- Git
+- File paths
+- Project serialization
+
+The editor translates classroom operations into a valid Project Model.
 
 ---
 
-# Design Goals
+# Primary Goals
 
-The editor should be:
+Teacher Mode should be:
 
 - Visual
-- Simple
-- Fast
-- Safe
-- Drag-and-drop
+- Touch friendly
 - Easy to learn
-- Difficult to break
+- Difficult to misuse
+- Fast for common tasks
+- Consistent throughout the application
 
-Most classroom changes should require only a few mouse clicks.
-
----
-
-# Project Model
-
-Teacher Mode edits a Project through the Project Model.
-
-The editor never edits serialized project data directly.
-
-Typical operations include:
-
-- Create Container
-- Rename Container
-- Move Container
-- Enable Container
-- Disable Container
-- Add Layout Entry
-- Remove Layout Entry
-- Move Layout Entry
-- Edit Properties
-- Import Assets
-
-The Project Model is responsible for maintaining project integrity.
+Most classroom changes should require only a few interactions.
 
 ---
 
-# Main Window
+# Editing Model
 
-```
-+--------------------------------------------------------------------------------+
-| File  Edit  View  Publish  Preview  Help                                       |
-+------------------------------+-------------------------------------------------+
-| Container Tree               | Layout                                          |
-|                              |                                                 |
-| ▼ Home                       | [Reading]                                       |
-|   ▶ Morning Meeting          | [Video]                                         |
-|   ▼ Reading                  | ------------------------------                  |
-|      ▶ Books                 | Morning Activities                              |
-|      ▶ Sight Words           | ------------------------------                  |
-|   ▶ Math                     | [Website]                                       |
-|                              | [PDF]                                           |
-|                              | [Information]                                   |
-+------------------------------+-------------------------------------------------+
-| Properties                                                         Preview      |
-+--------------------------------------------------------------------------------+
+Teacher Mode edits an in-memory Project Model.
+
+Every editing operation modifies the Project Model.
+
+Publishing creates a serialized representation of that Project.
+
+Teacher Mode never edits serialized project files directly.
+
+---
+
+# Workspace
+
+The editor consists of three primary work areas.
+
+```text
+Header
+
+--------------------------------------------
+
+Container Tree | Page Layout
+
+--------------------------------------------
+
+Editing Toolbar
 ```
 
-The editor presents two coordinated views of the same Project.
+Each area has a single responsibility.
 
 ---
 
 # Container Tree
 
-The left panel displays the classroom navigation hierarchy.
+The Container Tree represents classroom navigation.
 
-Each node represents one Container.
+Teachers use the tree to:
 
-Teachers manage:
+- Create pages
+- Rename pages
+- Delete pages
+- Move pages
+- Enable or disable pages
+- Select the page being edited
 
-- Container names
-- Parent-child relationships
-- Active state
-- Navigation hierarchy
+The tree represents hierarchy only.
 
-Supported operations include:
-
-- Expand
-- Collapse
-- Rename
-- Drag and Drop
-- Right-click context menus
-
-Disabled Containers remain visible so they may be re-enabled later.
-
-Selecting a Container displays its Layout.
+It does not represent presentation.
 
 ---
 
-# Layout
+# Page Layout
 
-The right panel displays the selected Container's Layout.
+The Page Layout represents the contents of the selected page.
 
-The Layout represents exactly what students will experience when viewing that Container.
+Teachers arrange:
 
-The Layout may contain:
-
-- Navigation Entries
-- Content Entries
+- Navigation entries
 - Sections
+- Activities
+- Classroom resources
 
-Teachers edit the Layout using drag-and-drop.
+The order of Layout Entries determines presentation order.
 
-Layout order determines rendering order.
-
----
-
-# Navigation Entries
-
-Navigation Entries are generated automatically from the Container hierarchy.
-
-Teachers do not manually create or delete Navigation Entries.
-
-Teachers may:
-
-- Reorder Navigation Entries
-- Position Navigation Entries anywhere within the Layout
-- Rename the referenced Container
-- Enable or disable the referenced Container
-
-Navigation Entry labels are automatically obtained from the referenced Container.
-
-Navigation Entries always reference direct child Containers.
+The Layout never changes classroom hierarchy.
 
 ---
 
-# Content Entries
+# Properties
 
-Teachers create Content Entries directly within the Layout.
+Selecting an object displays its editable properties.
 
-Current Content Entry types include:
+Only properties appropriate for the selected object should be displayed.
 
-- Video
-- Website
-- PDF
-- PowerPoint
-- Image
-- Information
+Examples include:
 
-Additional Content Entry types may be introduced without changing the editor architecture.
-
-Content Entries may be positioned anywhere within the Layout.
-
----
-
-# Sections
-
-Sections divide the Layout into logical visual groups.
-
-Sections are Layout Entries.
-
-Sections:
-
-- span the page width
-- display headings or descriptions
-- organize presentation
-- do not participate in navigation
-
-Sections may be reordered like any other Layout Entry.
-
----
-
-# Properties Panel
-
-Selecting an object displays the editable properties appropriate for that object.
-
-Only relevant properties are shown.
-
-## Container
-
-Examples:
+Container
 
 - Title
 - Subtitle
 - Active state
 
-Future versions may include page-level settings.
+Section
 
----
+- Heading
+- Description
 
-## Navigation Entry
-
-Navigation Entries derive most of their information from the referenced Container.
-
-Teachers may edit:
-
-- Position within the Layout
-
-Teachers do not edit:
-
-- Title
-- Destination
-- Parent
-
-These properties belong to the referenced Container.
-
----
-
-## Content Entry
-
-Examples:
+Content Entry
 
 - Label
 - Image
 - Target
-- Type-specific properties
+- Type-specific settings
+
+The editor should never expose internal identifiers or implementation details.
 
 ---
 
-## Section
+# Asset Selection
 
-Examples:
+Teacher Mode manages classroom media through asset pickers.
 
-- Title
-- Description
+Examples include:
 
-The editor never exposes internal identifiers or implementation details.
+- Image Picker
+- PDF Picker
+- Video Picker
+- PowerPoint Picker
+
+Asset pickers should:
+
+- Display available assets
+- Allow searching
+- Return filenames only
+
+Teachers should never manage storage paths.
 
 ---
 
 # Drag and Drop
 
-The editor supports:
+Whenever practical, Teacher Mode should support direct manipulation.
+
+Examples include:
 
 - Reordering Layout Entries
-- Moving Content Entries between Containers
-- Moving Sections
-- Reordering Navigation Entries
-- Reordering Containers
-- Dragging images onto entries
-- Dragging files into the Asset Library
+- Moving pages
+- Rearranging navigation
+- Importing classroom assets
 
-Future versions may support:
-
-- Ctrl+Drag duplication
-- Multi-selection
-- Clipboard operations
-
----
-
-# Context Menu
-
-Context menus present only operations appropriate for the selected object.
-
-Examples include:
-
-## Container
-
-- Rename
-- Enable / Disable
-- Add Child Container
-- Delete
-- Move
-
----
-
-## Content Entry
-
-- Duplicate
-- Delete
-- Move
-
----
-
-## Section
-
-- Rename
-- Delete
-- Move
-
----
-
-# Asset Library
-
-The editor maintains a reusable Asset Library.
-
-Examples include:
-
-- Images
-- Local videos
-- Documents
-- PowerPoint presentations
-
-Assets may be reused by multiple Layout Entries.
-
-Teachers should never need to locate the same file twice.
+Dragging should always produce predictable results.
 
 ---
 
@@ -335,114 +191,89 @@ Teachers should never need to locate the same file twice.
 
 Validation occurs continuously while editing.
 
-The editor distinguishes between structural validation and asset validation.
+Teacher Mode should distinguish between:
 
----
+- Structural errors
+- Asset warnings
 
-## Structural Validation
+Teachers should receive clear explanations of problems.
 
-Examples include:
-
-- Invalid hierarchy
-- Circular references
-- Invalid parent relationships
-- Duplicate identifiers
-- Invalid Layout Entries
-
-Structural validation failures prevent publishing.
-
----
-
-## Asset Validation
-
-Examples include:
-
-- Missing image
-- Missing document
-- Missing presentation
-- Missing media
-
-Asset validation generates warnings.
-
-Projects remain editable whenever practical.
-
----
-
-# Preview Mode
-
-The editor includes an integrated Student Preview.
-
-Preview uses the same rendering pipeline as Student Mode.
-
-This guarantees that teachers preview exactly what students will experience.
-
-Teachers should be able to switch instantly between editing and previewing.
-
----
-
-# Publishing
-
-Publishing is a deliberate action.
-
-Publishing may include:
-
-- Structural validation
-- Asset verification
-- Project serialization
-- Website generation
-- Git commit
-- GitHub Pages deployment
-
-Publishing never modifies the live classroom until validation succeeds.
-
----
-
-# Error Reporting
-
-Validation messages should clearly explain:
+Validation messages should explain:
 
 - What is wrong
 - Why it is wrong
 - How to correct it
 
-Teachers should never receive technical implementation errors.
+Implementation details should never appear in validation messages.
 
 ---
 
-# Future Features
+# Preview
 
-Possible future enhancements include:
+Teacher Mode should provide an integrated Student Preview.
+
+Preview should use the same rendering pipeline as Student Mode.
+
+Teachers should preview the classroom exactly as students will experience it.
+
+Preview should never use a separate implementation.
+
+---
+
+# Publishing
+
+Publishing is a deliberate teacher action.
+
+Publishing should:
+
+- Validate the Project
+- Serialize the Project
+- Produce the published classroom
+- Deliver it to the configured publishing destination
+
+Teacher Mode should remain unaware of where the published Project is ultimately stored.
+
+---
+
+# Error Handling
+
+Whenever practical:
+
+- Prevent invalid edits.
+- Explain problems clearly.
+- Preserve teacher work.
+- Recover gracefully.
+
+Teacher Mode should never expose technical errors to teachers.
+
+---
+
+# Future Capabilities
+
+The editor has been designed to accommodate future enhancements, including:
 
 - Undo / Redo
-- Search
-- Favorites
-- Recently Used Assets
-- Automatic image resizing
-- Automatic thumbnail generation
-- Bulk rename
-- Multi-select editing
-- Copy / Paste
+- Multi-selection
 - Keyboard shortcuts
 - Project templates
-- Import Project
-- Export Project
+- Shared asset libraries
 - Multiple classroom projects
-- Multiple previews
-- Theme support
-- Cloud asset synchronization
+- Automatic backups
+- Cloud synchronization
+
+These capabilities should extend the existing editing model rather than replace it.
 
 ---
 
-# Design Principle
+# Guiding Principles
 
-Teacher Mode should allow teachers to think in terms of classrooms rather than software.
+Every editor feature should reinforce the following goals.
 
-Teachers organize Containers.
+- Teachers organize classrooms.
+- Teachers never edit implementation details.
+- The editor edits the Project Model.
+- Validation protects project integrity.
+- Preview reflects Student Mode.
+- Publishing produces the classroom presented to students.
 
-Teachers arrange Layouts.
-
-Teachers configure Content.
-
-The editor is responsible for translating those actions into a valid Project.
-
-Teachers should never need to understand the underlying implementation.
+The editor should always make classroom authoring simpler without exposing the underlying implementation.

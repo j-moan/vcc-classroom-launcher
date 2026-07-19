@@ -318,8 +318,55 @@
       </form>
     </dialog>
 
+    <dialog
+      id="pdf-picker-dialog"
+      class="app-dialog pdf-picker-dialog"
+      aria-labelledby="pdf-picker-title"
+    >
+      <form id="pdf-picker-form" class="dialog-form" method="dialog">
+        <h2 id="pdf-picker-title" class="dialog-title">Choose PDF</h2>
+
+        <label for="pdf-search-input">Search:</label>
+
+        <input
+          id="pdf-search-input"
+          class="dialog-input"
+          type="search"
+          autocomplete="off"
+          placeholder="Type part of the filename"
+        />
+
+        <div
+          id="pdf-picker-list"
+          class="pdf-picker-list"
+          role="listbox"
+          aria-label="Available PDF files"
+        ></div>
+
+        <div class="dialog-actions">
+          <button
+            id="cancel-pdf-picker-button"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="select-pdf-button"
+            class="dialog-button dialog-button-primary"
+            type="submit"
+            disabled
+          >
+            Select
+          </button>
+        </div>
+      </form>
+    </dialog>
+
     <script src="data.js"></script>
     <script src="assets/images/catalog.js"></script>
+    <script src="assets/pdfs/catalog.js"></script>
     <script type="module" src="teacher.js"></script>
   </body>
 </html>

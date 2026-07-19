@@ -53,12 +53,19 @@ const imagePickerPreview = document.querySelector("#image-picker-preview");
 const imagePickerFileName = document.querySelector("#image-picker-file-name");
 const cancelImagePickerButton = document.querySelector("#cancel-image-picker-button");
 const selectImageButton = document.querySelector("#select-image-button");
+const pdfPickerDialog = document.querySelector("#pdf-picker-dialog");
+const pdfPickerForm = document.querySelector("#pdf-picker-form");
+const pdfSearchInput = document.querySelector("#pdf-search-input");
+const pdfPickerList = document.querySelector("#pdf-picker-list");
+const cancelPdfPickerButton = document.querySelector("#cancel-pdf-picker-button");
+const selectPdfButton = document.querySelector("#select-pdf-button");
 
 let project = null;
 let selectedContainerId = null;
 let selectedLayoutIndex = null;
 let renamingPage = false;
 let selectedImagePath = null;
+let selectedPdf = null;
 
 async function initializeTeacherView() {
   try {
@@ -711,6 +718,102 @@ function closeImagePickerDialog() {
   }
 }
 
+function renderPdfPickerList() {
+  pdfPickerList.replaceChildren();
+
+  const catalog = Array.isArray(window.CLASSROOM_PDFS) ? window.CLASSROOM_PDFS : [];
+
+  const searchText = pdfSearchInput.value.trim().toLowerCase();
+
+  const filteredPdfs = catalog.filter((fileName) => fileName.toLowerCase().includes(searchText));
+
+  if (filteredPdfs.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "pdf-picker-empty";
+    emptyMessage.textContent = "No matching PDF files found.";
+
+    pdfPickerList.appendChild(emptyMessage);
+    return;
+  }
+
+  filteredPdfs.forEach((fileName) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "pdf-picker-list-item";
+    button.dataset.pdfFileName = fileName;
+    button.textContent = fileName;
+
+    if (fileName === selectedPdf) {
+      button.classList.add("pdf-picker-list-item-selected");
+    }
+
+    button.addEventListener("click", () => {
+      updatePdfPickerSelection(fileName);
+    });
+
+    button.addEventListener("dblclick", () => {
+      updatePdfPickerSelection(fileName);
+      applySelectedPdf();
+    });
+
+    pdfPickerList.appendChild(button);
+  });
+}
+
+function updatePdfPickerSelection(fileName) {
+  selectedPdf = fileName;
+
+  selectPdfButton.disabled = false;
+
+  pdfPickerList.querySelectorAll(".pdf-picker-list-item-selected").forEach((item) => {
+    item.classList.remove("pdf-picker-list-item-selected");
+  });
+
+  const selectedItem = pdfPickerList.querySelector(
+    `[data-pdf-file-name="${CSS.escape(fileName)}"]`,
+  );
+
+  selectedItem?.classList.add("pdf-picker-list-item-selected");
+}
+
+function closePdfPickerDialog() {
+  selectedPdf = null;
+
+  if (pdfPickerDialog.open) {
+    pdfPickerDialog.close();
+  }
+}
+
+function openPdfPickerDialog() {
+  selectedPdf = tileDestinationInput.value || null;
+  pdfSearchInput.value = "";
+
+  renderPdfPickerList();
+
+  if (selectedPdf) {
+    updatePdfPickerSelection(selectedPdf);
+  } else {
+    selectPdfButton.disabled = true;
+  }
+
+  pdfPickerDialog.showModal();
+
+  window.requestAnimationFrame(() => {
+    pdfSearchInput.focus();
+  });
+}
+
+function applySelectedPdf() {
+  if (!selectedPdf) {
+    return;
+  }
+
+  tileDestinationInput.value = selectedPdf;
+
+  closePdfPickerDialog();
+}
+
 function applySelectedImage() {
   if (!selectedImagePath) {
     return;
@@ -777,6 +880,9 @@ function updateTileDestinationField() {
 
   tileDestinationGroup.hidden = false;
   tileDestinationInput.required = true;
+  const usesLocalPicker = type === "pdf";
+  tileDestinationInput.readOnly = usesLocalPicker;
+  tileDestinationInput.placeholder = usesLocalPicker ? "Click to choose a PDF" : "";
 
   const labels = {
     video: "YouTube URL:",
@@ -922,6 +1028,27 @@ imagePickerForm.addEventListener("submit", (event) => {
 imagePickerDialog.addEventListener("cancel", (event) => {
   event.preventDefault();
   closeImagePickerDialog();
+});
+tileDestinationInput.addEventListener("click", () => {
+  if (tileTypeSelect.value === "pdf") {
+    openPdfPickerDialog();
+  }
+});
+tileDestinationInput.addEventListener("keydown", (event) => {
+  if (tileTypeSelect.value === "pdf" && (event.key === "Enter" || event.key === " ")) {
+    event.preventDefault();
+    openPdfPickerDialog();
+  }
+});
+pdfSearchInput.addEventListener("input", renderPdfPickerList);
+cancelPdfPickerButton.addEventListener("click", closePdfPickerDialog);
+pdfPickerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  applySelectedPdf();
+});
+pdfPickerDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closePdfPickerDialog();
 });
 
 void initializeTeacherView();

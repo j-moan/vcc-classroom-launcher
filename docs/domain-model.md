@@ -2,152 +2,107 @@
 
 # Project Domain Model
 
-**Version:** 2.0 (Draft)
+## Purpose
 
-**Status:** Current
+This document defines the logical Project Domain Model used by the VCC Classroom Launcher.
 
-**Last Updated:** July 2026
+The Domain Model describes the classroom itself rather than how the classroom is stored or rendered.
 
----
+It defines:
 
-# Purpose
+- The objects that make up a classroom
+- The relationships between those objects
+- The rules that govern those relationships
 
-This document defines the Project Data Model used by the VCC Classroom Launcher.
+This document intentionally remains independent of:
 
-The Project Data Model describes every object that may exist within a classroom project and the relationships between those objects.
+- JavaScript implementation
+- Serialization format
+- Storage mechanism
+- User interface
 
-This document intentionally defines the logical model rather than the serialized storage format.
+The same logical model should remain valid whether the project is stored as:
 
-Future storage mechanisms (JSON, database, cloud services, etc.) should all represent this same Project Model.
-
----
-
-# Scope
-
-This document defines:
-
-- Project structure
-- Container hierarchy
-- Layout organization
-- Layout Entry types
-- Project metadata
-- Assets
-- Application settings
-- Validation rules
-- Teacher Mode editing model
-
-Implementation details and rendering behavior are documented separately in **Software Architecture.md**.
+- `assets/data/data.js`
+- JSON
+- A database
+- A classroom server
+- A cloud service
 
 ---
 
 # Design Goals
 
-The Project Model is designed around several principles.
+The Domain Model is designed around several principles.
 
 ## Simple
 
-The data model should be understandable without knowledge of the implementation.
+The classroom should be understandable without knowledge of the application's implementation.
 
-Teachers should ultimately edit projects through Teacher Mode rather than editing serialized files.
+The logical model should describe classrooms rather than software.
 
 ---
 
 ## Stable
 
-The logical Project Model should remain stable even if the application's storage format changes.
+The logical model should remain stable even when implementation details change.
 
-Future migration from JavaScript objects to JSON, databases, or cloud services should not require redesigning the Project Model.
-
----
-
-## Extensible
-
-New content types and project features should be introduced without changing the existing hierarchy.
+Changing serialization or storage should not require redesigning the classroom model.
 
 ---
 
 ## Portable
 
-Projects should eventually be transferable between computers.
+A classroom should exist independently of any computer or hosting environment.
 
-A classroom project should exist independently of any specific computer or hosting environment.
-
----
-
-# Glossary
-
-## Project
-
-A complete classroom definition.
-
-A Project contains every object required to present or edit a classroom.
+Projects should be transferable between systems without changing their meaning.
 
 ---
 
-## Container
+## Extensible
 
-A Container represents one classroom page.
+New classroom capabilities should be introduced by extending the model rather than redesigning it.
 
-Containers define navigation.
-
-Containers own Layouts.
+New content types should not require changes to the existing hierarchy.
 
 ---
 
-## Layout
+## Implementation Independent
 
-A Layout defines the ordered presentation of one Container.
+The Domain Model intentionally avoids implementation details.
 
-Layouts do not define hierarchy.
+It describes:
 
----
+- What the classroom contains
+- How classroom objects relate
 
-## Layout Entry
+It does not describe:
 
-A Layout Entry represents one visible object displayed within a Container.
-
----
-
-## Asset
-
-An Asset is reusable media referenced by one or more Layout Entries.
-
-Examples include:
-
-- images
-- local videos
-- PDF documents
-- PowerPoint presentations
+- HTML
+- JavaScript
+- CSS
+- Storage paths
+- Rendering logic
 
 ---
 
-## Project Model
+# Core Concepts
 
-The editable in-memory representation of a Project.
-
-Teacher Mode edits the Project Model.
-
-Serialized project files are generated from the Project Model.
-
----
-
-# High Level Project Structure
-
-Conceptually every classroom project consists of the following objects.
+The classroom is built around a small number of core concepts.
 
 ```
 Project
-│
-├── Metadata
-├── Settings
-├── Containers
-├── Assets
-└── Future Extensions
+    │
+    ├── Containers
+    │
+    ├── Layouts
+    │
+    ├── Layout Entries
+    │
+    └── Assets
 ```
 
-Student Mode renders Containers.
-
-Teacher Mode edits the Project.
+Every classroom can be completely described using these concepts.
 
 ---
 
@@ -155,28 +110,32 @@ Teacher Mode edits the Project.
 
 A Project represents one complete classroom.
 
-Every classroom loaded by Student Mode or Teacher Mode is represented internally as exactly one Project.
+A Project owns every object required to present or edit a classroom.
 
-A Project owns every object required to render the classroom.
+A Project contains:
 
-Future versions may support multiple Projects.
+- Metadata
+- Settings
+- Containers
+- Asset references
+
+The Project is the root object of the Domain Model.
 
 ---
 
 ## Project Metadata
 
-Project Metadata describes the project itself rather than classroom pages.
+Metadata describes the classroom project itself.
 
 Examples include:
 
-- Project name
+- Classroom name
 - Author
 - Description
-- Version
 - Creation date
 - Last modified date
 
-Project Metadata does not affect classroom rendering.
+Metadata does not affect classroom presentation.
 
 ---
 
@@ -187,70 +146,68 @@ Project Settings define application-wide defaults.
 Examples include:
 
 - Default column count
-- Default tile appearance
-- Default image scaling
-- Default animations
+- Default layout behavior
 - Future theme settings
 
-Individual Containers may override selected settings.
+Individual Containers may override selected defaults.
 
 ---
 
-# Containers
+# Container
 
-Containers represent classroom pages.
+A Container represents one classroom page.
 
 Containers define navigation.
 
-Containers form a strict hierarchical tree.
+Containers own presentation.
 
-Each Container owns one Layout.
+Every Container owns exactly one Layout.
 
 ---
 
 ## Container Hierarchy
 
-Containers form the navigation structure.
+Containers form a strict tree.
 
 ```
 Home
 │
 ├── Reading
-│    ├── Phonics
-│    └── Stories
+│    ├── Stories
+│    └── Phonics
 │
 ├── Math
 │
 └── Morning Meeting
-     ├── Calendar
-     └── Songs
 ```
 
 Rules:
 
-- Every Project has one root Container.
+- Every Project has exactly one root Container.
 - The root Container has no parent.
 - Every other Container has exactly one parent.
 - Containers may have zero or more children.
-- Circular relationships are not permitted.
+- Circular relationships are never permitted.
+
+Hierarchy defines navigation.
+
+Hierarchy does not define presentation.
 
 ---
 
 ## Container Properties
 
-Each Container contains information describing one classroom page.
+Typical Container properties include:
 
-Typical properties include:
-
+- Identifier
 - Title
 - Subtitle
 - Parent
 - Active state
-- Child Container list
 - Layout
 - Optional page settings
 
-Additional properties may be introduced without changing the overall architecture.
+Future properties may be introduced without changing the overall model.
 
 ---
 
@@ -258,152 +215,158 @@ Additional properties may be introduced without changing the overall architectur
 
 Containers may be enabled or disabled.
 
-Disabled Containers remain editable within Teacher Mode.
+Disabled Containers:
 
-Disabled Containers are inaccessible within Student Mode.
+- Remain editable
+- Remain part of the Project
+- Are inaccessible within Student Mode
 
-The disabled state applies recursively to descendant Containers.
+Disabling a Container also disables access to all descendants.
+
+No classroom information is deleted when a Container is disabled.
 
 ---
 
 # Layout
 
-Each Container owns exactly one Layout.
+Every Container owns exactly one Layout.
 
-The Layout determines how the page is presented.
+A Layout defines the presentation order of visible objects.
 
-The Layout does not define navigation.
+Layouts do not define navigation.
 
-The Layout is simply an ordered collection.
+Layouts do not define hierarchy.
+
+Layouts are simply ordered collections.
 
 Example:
 
-```
+```text
 Navigation
 Navigation
 Section
 Video
 Website
 Section
-Image
 PDF
 Information
 ```
 
-Rendering always follows Layout order.
+Rendering follows Layout order.
 
 ---
 
 ## Layout Properties
 
-Layouts may eventually support page-specific settings.
+Layouts may contain page-specific presentation settings.
 
 Examples include:
 
 - Column count
-- Tile spacing
-- Page padding
+- Page spacing
 - Future layout options
 
-These properties affect presentation only.
+These settings affect presentation only.
 
 ---
 
 # Layout Entries
 
-A Layout consists of an ordered collection of Layout Entries.
+Every visible object displayed within a Container is represented by one Layout Entry.
 
-Every visible object displayed within Student Mode is represented by one Layout Entry.
+Layout Entries belong to exactly one Layout.
 
-Layout Entries do not own other Layout Entries.
+Layout Entries never own other Layout Entries.
 
-Layout Entries never participate in navigation hierarchy.
+Layout Entries do not participate in hierarchy.
 
 ---
 
-## Supported Layout Entry Types
+## Layout Entry Types
 
-Current Layout Entry types include:
+Current Layout Entry categories include:
 
 | Type        | Purpose                        |
 | ----------- | ------------------------------ |
-| Navigation  | Opens a child Container        |
-| Section     | Organizes page presentation    |
-| Video       | Plays a video                  |
+| Navigation  | Opens another Container        |
+| Section     | Organizes presentation         |
+| Video       | Launches a video               |
+| PDF         | Opens a PDF                    |
 | Website     | Opens a website                |
-| PDF         | Opens a document               |
-| PowerPoint  | Opens a presentation           |
 | Image       | Displays an image              |
+| PowerPoint  | Opens a presentation           |
 | Information | Displays informational content |
+| Placeholder | Reserved classroom location    |
 
-Additional Layout Entry types may be added in future versions without changing the Project Model.
+Additional Layout Entry types should extend the model without requiring structural redesign.
 
 ---
 
 # Navigation Entries
 
-Navigation Entries provide access to child Containers.
+Navigation Entries are unique.
 
-Navigation Entries are unique because they do not own the information they display.
+Unlike other Layout Entries, Navigation Entries do not own the information they display.
 
-Instead, they reference an existing child Container.
+Instead they reference another Container.
 
 ```
 Parent Container
         │
         ▼
- Navigation Entry
+Navigation Entry
         │
         ▼
- Child Container
+Child Container
 ```
 
-The displayed title is obtained from the referenced Container.
+The displayed title is derived from the referenced Container.
 
-This eliminates duplicated information within the Project.
+This prevents duplicated information within the Project.
 
 ---
 
-## Navigation Entry Rules
+## Navigation Rules
 
-Navigation Entries follow the following rules.
+Navigation Entries follow these rules.
 
-- Every Navigation Entry references exactly one direct child Container.
-- Navigation Entries may only reference direct children.
-- Navigation Entries may appear anywhere within the Layout.
-- Navigation labels are automatically derived from the referenced Container.
-- Teachers may reorder Navigation Entries.
-- Teachers may not manually create or delete Navigation Entries.
-- Disabling a Container automatically removes it from Student Mode navigation.
+- Reference exactly one direct child Container.
+- May only reference direct children.
+- May appear anywhere within the Layout.
+- Derive their displayed title from the referenced Container.
+- May be reordered within the Layout.
 
 Teacher Mode generates Navigation Entries automatically from the Container hierarchy.
+
+Teachers manage the hierarchy rather than individual Navigation Entries.
 
 ---
 
 # Sections
 
-Sections organize the visual presentation of a page.
+Sections organize presentation.
 
 Sections are Layout Entries.
-
-Sections do not participate in navigation.
 
 Sections may contain:
 
 - Heading
 - Description
 
-Sections span the width of the page.
+Sections:
 
-The next Layout Entry begins at the first column below the Section.
+- Span the page width
+- Separate groups of related content
+- Never perform actions
+- Never participate in navigation
 
-Multiple Sections may exist within the same Layout.
+Sections exist purely for presentation.
 
 ---
 
 # Content Entries
 
-Content Entries represent classroom resources.
+Content Entries represent classroom activities or classroom resources.
 
 Unlike Navigation Entries, Content Entries own their own presentation information.
 
@@ -412,24 +375,10 @@ Typical properties include:
 - Label
 - Image
 - Target
-- Type-specific properties
+- Active state
+- Type-specific settings
 
 Each Content Entry belongs to exactly one Layout.
-
----
-
-## Content Types
-
-The initial implementation supports:
-
-- Video
-- Website
-- PDF
-- PowerPoint
-- Image
-- Information
-
-Future versions may introduce additional content types without changing the Project Model.
 
 ---
 
@@ -440,56 +389,67 @@ Assets represent reusable classroom media.
 Examples include:
 
 - Images
-- Local videos
-- PDF documents
-- Presentations
+- Videos
+- PDFs
+- PowerPoint presentations
 
-Layout Entries reference Assets.
+Assets are referenced by Layout Entries.
 
-Assets do not reference Layout Entries.
+Assets never reference Layout Entries.
 
-This allows the same Asset to be reused throughout a Project.
+This allows a single Asset to be reused throughout the Project.
 
-Future Teacher Mode versions will manage Assets through an Asset Library.
+---
+
+# Asset References
+
+The Project intentionally stores only logical filenames.
+
+Examples:
+
+```text
+alphabet.jpg
+
+reading-centers.pdf
+
+morning-video.mp4
+```
+
+The Project never stores storage paths such as:
+
+```text
+assets/images/alphabet.jpg
+
+assets/pdfs/reading-centers.pdf
+```
+
+Resolving filenames into physical locations is the responsibility of the application's asset helper layer rather than the Domain Model.
 
 ---
 
 # Project Model
 
-Teacher Mode edits a Project through the Project Model.
+Teacher Mode edits an in-memory Project Model.
 
-The Project Model is the editable in-memory representation of a classroom.
-
-The Project Model is responsible for maintaining project integrity.
+The Project Model is the editable representation of the classroom.
 
 Teacher Mode never edits serialized project data directly.
 
----
+Every editing operation occurs through the Project Model.
 
-## Project Operations
-
-Typical Project Model operations include:
+Typical operations include:
 
 - Create Container
 - Delete Container
 - Rename Container
-- Move Container
 - Enable Container
 - Disable Container
 - Add Layout Entry
-- Remove Layout Entry
+- Delete Layout Entry
 - Move Layout Entry
 - Modify Properties
-- Import Assets
-- Remove Assets
 
-Future operations may include:
-
-- Duplicate Container
-- Copy Layout
-- Undo
-- Redo
-- Bulk editing
+The Project Model is responsible for maintaining domain integrity throughout editing.
 
 ---
 
@@ -501,16 +461,16 @@ Projects are expected to satisfy several categories of validation.
 
 ## Structural Validation
 
-Structural validation verifies Project integrity.
+Structural validation verifies the integrity of the Domain Model.
 
 Examples include:
 
-- One root Container
+- Exactly one root Container
 - Valid parent relationships
 - Valid child relationships
 - No circular hierarchy
 - Supported Layout Entry types
-- Navigation integrity
+- Valid navigation references
 
 Structural validation failures prevent Student Mode from loading.
 
@@ -518,33 +478,31 @@ Structural validation failures prevent Student Mode from loading.
 
 ## Asset Validation
 
-Asset validation verifies referenced media.
+Asset validation verifies referenced classroom media.
 
 Examples include:
 
 - Missing images
+- Missing PDFs
 - Missing videos
-- Missing documents
-- Missing presentations
+- Missing PowerPoint presentations
 
-Asset validation generates warnings.
+Asset validation produces warnings whenever practical.
 
-Missing assets should not prevent classroom operation whenever practical.
+Missing assets should not invalidate an otherwise usable classroom.
 
 ---
 
 # Serialization
 
-The Project Model is independent of storage.
+Serialization exists only to persist Projects.
 
-Teacher Mode edits the Project Model.
-
-Saving a Project serializes the Project Model into a portable format.
+The serialized representation is not part of the Domain Model.
 
 ```
 Project Model
-       │
-       ▼
+      │
+      ▼
 Serialized Project
 ```
 
@@ -552,117 +510,18 @@ Loading performs the reverse operation.
 
 ```
 Serialized Project
-       │
-       ▼
+      │
+      ▼
 Project Model
 ```
 
-The serialization format may evolve without changing the logical Project Model.
+The serialization format may change without changing the logical classroom model.
 
 ---
 
-# Teacher Editing Model
+# Guiding Principle
 
-Teacher Mode presents two coordinated views of the same Project.
-
----
-
-## Container Tree
-
-The left panel displays the Container hierarchy.
-
-Teachers manage:
-
-- Container names
-- Parent-child relationships
-- Active state
-- Container selection
-
-The Container Tree defines navigation.
-
----
-
-## Layout Editor
-
-The right panel displays the selected Container's Layout.
-
-Teachers manage:
-
-- Sections
-- Content Entries
-- Ordering of Layout Entries
-
-Navigation Entries appear automatically based on the Container hierarchy.
-
-The Layout Editor defines presentation.
-
----
-
-## Properties Panel
-
-Selecting an object displays its editable properties.
-
-Examples include:
-
-### Container
-
-- Title
-- Subtitle
-- Active state
-
-### Section
-
-- Heading
-- Description
-
-### Content Entry
-
-- Label
-- Image
-- Target
-- Type-specific properties
-
-Only properties appropriate for the selected object are displayed.
-
----
-
-# Application Defaults
-
-Projects inherit global application defaults.
-
-Examples include:
-
-- Default column count
-- Default tile appearance
-- Default image scaling
-- Default animations
-
-Containers may override selected defaults when appropriate.
-
----
-
-# Future Expansion
-
-The Project Model is intentionally extensible.
-
-Future versions may introduce:
-
-- Additional Layout Entry types
-- Shared Asset Library
-- Page Templates
-- Themes
-- Multiple Projects
-- Search
-- Localization
-- Cloud synchronization
-
-These enhancements should extend the existing Project Model rather than replacing it.
-
----
-
-# Summary
-
-The Project Data Model separates three independent concepts:
+The Domain Model intentionally separates three independent concepts:
 
 - Navigation
 - Presentation
@@ -672,14 +531,12 @@ Containers define navigation.
 
 Layouts define presentation.
 
-Layout Entries define the visible objects displayed within a page.
+Layout Entries define visible classroom objects.
 
-Teacher Mode edits the Project Model.
+Assets provide reusable classroom media.
 
-Student Mode presents the Project Model.
+The Project Model manages the classroom.
 
-Serialization exists only to persist Projects between editing sessions.
+Student Mode presents the classroom.
 
-The guiding principle of the Project Data Model is:
-
-> **A Project describes a classroom. The Project Model manages the classroom. Student Mode presents the classroom.**
+Teacher Mode edits the classroom.

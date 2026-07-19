@@ -5,6 +5,7 @@ import { validateProject } from "./validators/project-validator.js";
 import { validateAssets } from "./validators/asset-validator.js";
 import { loadProject, ProjectLoadError } from "./project/project-loader.js";
 import { openVideo, closeVideo } from "./actions/video-action.js";
+import { openPdf, closePdf } from "./actions/pdf-action.js";
 
 const TEACHER_PASSWORD = "class";
 const DEFAULT_COLUMNS = 8;
@@ -34,6 +35,11 @@ const elements = {
   videoTitle: document.getElementById("videoTitle"),
   youtubePlayerElement: document.getElementById("youtubePlayer"),
   closeVideoButton: document.getElementById("closeVideoButton"),
+
+  pdfModal: document.getElementById("pdfModal"),
+  pdfTitle: document.getElementById("pdfTitle"),
+  pdfFrame: document.getElementById("pdfFrame"),
+  closePdfButton: document.getElementById("closePdfButton"),
 
   messageBox: document.getElementById("messageBox"),
 };
@@ -276,6 +282,12 @@ function handleContentAction(entry) {
       break;
     case "website":
     case "pdf":
+      try {
+        openPdf(entry, elements);
+      } catch (error) {
+        showMessage(error.message);
+      }
+      break;
     case "powerpoint":
     case "image":
       showMessage(`${getEntryLabel(entry)} selected.`);
@@ -328,6 +340,15 @@ elements.closeVideoButton.addEventListener("click", () => {
 elements.videoModal.addEventListener("click", (event) => {
   if (event.target === elements.videoModal) {
     closeVideo(elements);
+  }
+});
+elements.closePdfButton.addEventListener("click", () => {
+  closePdf(elements);
+});
+
+elements.pdfModal.addEventListener("click", (event) => {
+  if (event.target === elements.pdfModal) {
+    closePdf(elements);
   }
 });
 

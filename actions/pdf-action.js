@@ -1,5 +1,7 @@
 "use strict";
 
+import { getPdfPath } from "../utilities/asset-paths.js";
+
 let currentElements = null;
 
 export function openPdf(entry, elements) {
@@ -36,5 +38,5 @@ function getPdfTarget(entry) {
     return null;
   }
 
-  return entry.target.trim();
+  return getPdfPath(entry.target.trim());
 }
