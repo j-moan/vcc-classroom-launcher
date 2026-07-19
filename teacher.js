@@ -24,11 +24,40 @@ const messageDialogTitle = document.querySelector("#message-dialog-title");
 const messageDialogText = document.querySelector("#message-dialog-text");
 const messageDialogOkButton = document.querySelector("#message-dialog-ok-button");
 const messageDialogCancelButton = document.querySelector("#message-dialog-cancel-button");
+const addTileButton = document.querySelector("#add-tile-button");
+const addTileDialog = document.querySelector("#add-tile-dialog");
+const addTileForm = document.querySelector("#add-tile-form");
+const tileNameInput = document.querySelector("#tile-name-input");
+const tileTypeSelect = document.querySelector("#tile-type-select");
+const tileThumbnailInput = document.querySelector("#tile-thumbnail-input");
+const tileDestinationGroup = document.querySelector("#tile-destination-group");
+const tileDestinationLabel = document.querySelector("#tile-destination-label");
+const tileDestinationInput = document.querySelector("#tile-destination-input");
+const cancelAddTileButton = document.querySelector("#cancel-add-tile-button");
+const addSeparatorButton = document.querySelector("#add-separator-button");
+const addSeparatorDialog = document.querySelector("#add-separator-dialog");
+const addSeparatorForm = document.querySelector("#add-separator-form");
+const separatorNameInput = document.querySelector("#separator-name-input");
+const cancelAddSeparatorButton = document.querySelector("#cancel-add-separator-button");
+const deleteItemButton = document.querySelector("#delete-item-button");
+const moveItemUpButton = document.querySelector("#move-item-up-button");
+const moveItemDownButton = document.querySelector("#move-item-down-button");
+const tileThumbnailPreview = document.querySelector("#tile-thumbnail-preview");
+const changeTileThumbnailButton = document.querySelector("#change-tile-thumbnail-button");
+const imagePickerDialog = document.querySelector("#image-picker-dialog");
+const imagePickerForm = document.querySelector("#image-picker-form");
+const imageSearchInput = document.querySelector("#image-search-input");
+const imagePickerList = document.querySelector("#image-picker-list");
+const imagePickerPreview = document.querySelector("#image-picker-preview");
+const imagePickerFileName = document.querySelector("#image-picker-file-name");
+const cancelImagePickerButton = document.querySelector("#cancel-image-picker-button");
+const selectImageButton = document.querySelector("#select-image-button");
 
 let project = null;
 let selectedContainerId = null;
 let selectedLayoutIndex = null;
 let renamingPage = false;
+let selectedImagePath = null;
 
 async function initializeTeacherView() {
   try {
@@ -440,6 +469,362 @@ async function deleteSelectedPage() {
   }
 }
 
+function openAddTileDialog() {
+  tileNameInput.value = "";
+  tileTypeSelect.value = "placeholder";
+  tileThumbnailInput.value = "images/default-page.jpg";
+  tileThumbnailPreview.src = "images/default-page.jpg";
+  tileDestinationInput.value = "";
+
+  updateTileDestinationField();
+
+  addTileDialog.showModal();
+
+  window.requestAnimationFrame(() => {
+    tileNameInput.focus();
+  });
+}
+
+function openAddSeparatorDialog() {
+  if (!selectedContainerId) {
+    showTeacherMessage("Select a page before adding a separator.");
+    return;
+  }
+
+  separatorNameInput.value = "";
+  addSeparatorDialog.showModal();
+
+  window.requestAnimationFrame(() => {
+    separatorNameInput.focus();
+  });
+}
+
+function closeAddSeparatorDialog() {
+  separatorNameInput.value = "";
+
+  if (addSeparatorDialog.open) {
+    addSeparatorDialog.close();
+  }
+}
+
+function createSeparator(event) {
+  event.preventDefault();
+
+  if (!selectedContainerId) {
+    showTeacherMessage("Select a page before adding a separator.");
+    return;
+  }
+
+  const label = separatorNameInput.value.trim();
+
+  if (!label) {
+    showTeacherMessage("Enter a name for the separator.");
+    separatorNameInput.focus();
+    return;
+  }
+
+  const separator = {
+    id: createSeparatorId(),
+    type: "section",
+    label,
+    active: true,
+  };
+
+  const newLayoutIndex = project.addLayoutEntry(
+    selectedContainerId,
+    separator,
+    selectedLayoutIndex,
+  );
+
+  saveWorkingProjectData(project.toObject());
+
+  showSelectedContainer(selectedContainerId);
+  selectLayoutEntry(newLayoutIndex);
+
+  closeAddSeparatorDialog();
+}
+
+function createSeparatorId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `section-${crypto.randomUUID()}`;
+  }
+
+  return `section-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function createTile(event) {
+  event.preventDefault();
+
+  if (!selectedContainerId) {
+    showTeacherMessage("Select a page before adding a tile.");
+    return;
+  }
+
+  const label = tileNameInput.value.trim();
+  const type = tileTypeSelect.value;
+  const image = tileThumbnailInput.value.trim() || "images/default-page.jpg";
+  const target = type === "placeholder" ? "" : tileDestinationInput.value.trim();
+
+  if (!label) {
+    showTeacherMessage("Enter a name for the tile.");
+    tileNameInput.focus();
+    return;
+  }
+
+  if (type !== "placeholder" && !target) {
+    showTeacherMessage("Enter a destination for the tile.");
+    tileDestinationInput.focus();
+    return;
+  }
+
+  const tile = {
+    id: createTileId(),
+    type,
+    label,
+    image,
+    target,
+    active: true,
+  };
+
+  const newLayoutIndex = project.addLayoutEntry(selectedContainerId, tile, selectedLayoutIndex);
+
+  saveWorkingProjectData(project.toObject());
+
+  selectedLayoutIndex = newLayoutIndex;
+
+  showSelectedContainer(selectedContainerId);
+  selectLayoutEntry(newLayoutIndex);
+
+  closeAddTileDialog();
+}
+
+function createTileId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `tile-${crypto.randomUUID()}`;
+  }
+
+  return `tile-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function closeAddTileDialog() {
+  if (addTileDialog.open) {
+    addTileDialog.close();
+  }
+}
+
+function openImagePickerDialog() {
+  selectedImagePath = tileThumbnailInput.value || null;
+  imageSearchInput.value = "";
+
+  renderImagePickerList();
+
+  if (selectedImagePath) {
+    updateImagePickerSelection(selectedImagePath);
+  } else {
+    imagePickerPreview.src = "images/default-page.jpg";
+    imagePickerFileName.textContent = "No image selected";
+    selectImageButton.disabled = true;
+  }
+
+  imagePickerDialog.showModal();
+
+  window.requestAnimationFrame(() => {
+    imageSearchInput.focus();
+  });
+}
+
+function renderImagePickerList() {
+  imagePickerList.replaceChildren();
+
+  const catalog = Array.isArray(window.CLASSROOM_IMAGES) ? window.CLASSROOM_IMAGES : [];
+
+  const searchText = imageSearchInput.value.trim().toLowerCase();
+
+  const filteredImages = catalog.filter((imagePath) => {
+    const fileName = getImageFileName(imagePath).toLowerCase();
+
+    return fileName.includes(searchText);
+  });
+
+  if (filteredImages.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "image-picker-empty";
+    emptyMessage.textContent = "No matching images found.";
+
+    imagePickerList.appendChild(emptyMessage);
+    return;
+  }
+
+  filteredImages.forEach((imagePath) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "image-picker-list-item";
+    button.dataset.imagePath = imagePath;
+    button.textContent = getImageFileName(imagePath);
+
+    if (imagePath === selectedImagePath) {
+      button.classList.add("image-picker-list-item-selected");
+    }
+
+    button.addEventListener("click", () => {
+      updateImagePickerSelection(imagePath);
+    });
+
+    button.addEventListener("dblclick", () => {
+      updateImagePickerSelection(imagePath);
+      applySelectedImage();
+    });
+
+    imagePickerList.appendChild(button);
+  });
+}
+
+function updateImagePickerSelection(imagePath) {
+  selectedImagePath = imagePath;
+
+  imagePickerPreview.src = imagePath;
+  imagePickerFileName.textContent = getImageFileName(imagePath);
+  selectImageButton.disabled = false;
+
+  imagePickerList.querySelectorAll(".image-picker-list-item-selected").forEach((item) => {
+    item.classList.remove("image-picker-list-item-selected");
+  });
+
+  const selectedItem = imagePickerList.querySelector(
+    `[data-image-path="${CSS.escape(imagePath)}"]`,
+  );
+
+  selectedItem?.classList.add("image-picker-list-item-selected");
+}
+
+function getImageFileName(imagePath) {
+  return imagePath.split("/").pop() || imagePath;
+}
+
+function closeImagePickerDialog() {
+  selectedImagePath = null;
+
+  if (imagePickerDialog.open) {
+    imagePickerDialog.close();
+  }
+}
+
+function applySelectedImage() {
+  if (!selectedImagePath) {
+    return;
+  }
+
+  tileThumbnailInput.value = selectedImagePath;
+  tileThumbnailPreview.src = selectedImagePath;
+
+  closeImagePickerDialog();
+}
+
+async function deleteSelectedItem() {
+  if (selectedContainerId === null || selectedLayoutIndex === null) {
+    showTeacherMessage("Select a separator or tile to delete.");
+
+    return;
+  }
+
+  const layout = project.getLayout(selectedContainerId);
+  const entry = layout[selectedLayoutIndex];
+
+  if (!entry) {
+    showTeacherMessage("The selected item could not be found.");
+
+    return;
+  }
+
+  const confirmed = await showTeacherConfirmation(
+    `Delete "${getLayoutName(entry)}"?`,
+    "Confirm Delete",
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const deletedIndex = selectedLayoutIndex;
+
+  project.deleteLayoutEntry(selectedContainerId, deletedIndex);
+
+  saveWorkingProjectData(project.toObject());
+
+  const updatedLayout = project.getLayout(selectedContainerId);
+
+  showSelectedContainer(selectedContainerId);
+
+  if (updatedLayout.length === 0) {
+    return;
+  }
+
+  const nextSelectedIndex = Math.min(deletedIndex, updatedLayout.length - 1);
+
+  selectLayoutEntry(nextSelectedIndex);
+}
+
+function updateTileDestinationField() {
+  const type = tileTypeSelect.value;
+
+  if (type === "placeholder") {
+    tileDestinationGroup.hidden = true;
+    tileDestinationInput.required = false;
+    return;
+  }
+
+  tileDestinationGroup.hidden = false;
+  tileDestinationInput.required = true;
+
+  const labels = {
+    video: "YouTube URL:",
+    website: "Website URL:",
+    pdf: "PDF File or URL:",
+    powerpoint: "PowerPoint File or URL:",
+    image: "Image File or URL:",
+    information: "Text:",
+  };
+
+  tileDestinationLabel.textContent = labels[type] || "Destination:";
+}
+
+function moveSelectedItem(direction) {
+  if (selectedContainerId === null || selectedLayoutIndex === null) {
+    showTeacherMessage("Select a separator, tile, or navigation item to move.");
+
+    return;
+  }
+
+  const layout = project.getLayout(selectedContainerId);
+  const destinationIndex = selectedLayoutIndex + direction;
+
+  if (destinationIndex < 0 || destinationIndex >= layout.length) {
+    return;
+  }
+
+  const result = project.moveLayoutEntry(
+    selectedContainerId,
+    selectedLayoutIndex,
+    destinationIndex,
+  );
+
+  saveWorkingProjectData(project.toObject());
+
+  showSelectedContainer(selectedContainerId);
+  selectLayoutEntry(result.newIndex);
+
+  if (result.treeChanged) {
+    renderContainerTree(project.getContainerTree());
+
+    const selectedRow = containerTreeElement.querySelector(
+      `[data-container-id="${CSS.escape(selectedContainerId)}"]`,
+    );
+
+    selectedRow?.classList.add("container-tree-row-selected");
+  }
+}
+
 function showTeacherMessage(message, title = "Message") {
   messageDialogTitle.textContent = title;
   messageDialogText.textContent = message;
@@ -485,6 +870,10 @@ function showTeacherConfirmation(message, title = "Confirm") {
   });
 }
 
+/* =========================================================
+   Event Listeners
+   ========================================================= */
+
 addSubpageButton.addEventListener("click", openAddSubpageDialog);
 addSubpageForm.addEventListener("submit", createSubpage);
 cancelAddSubpageButton.addEventListener("click", closeAddSubpageDialog);
@@ -499,6 +888,39 @@ messageDialogOkButton.addEventListener("click", () => {
   }
 
   messageDialog.close();
+});
+addTileButton.addEventListener("click", openAddTileDialog);
+tileTypeSelect.addEventListener("change", updateTileDestinationField);
+addSeparatorButton.addEventListener("click", openAddSeparatorDialog);
+addSeparatorForm.addEventListener("submit", createSeparator);
+cancelAddSeparatorButton.addEventListener("click", closeAddSeparatorDialog);
+addSeparatorDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeAddSeparatorDialog();
+});
+cancelAddTileButton.addEventListener("click", closeAddTileDialog);
+addTileDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeAddTileDialog();
+});
+addTileForm.addEventListener("submit", createTile);
+deleteItemButton.addEventListener("click", deleteSelectedItem);
+moveItemUpButton.addEventListener("click", () => {
+  moveSelectedItem(-1);
+});
+moveItemDownButton.addEventListener("click", () => {
+  moveSelectedItem(1);
+});
+changeTileThumbnailButton.addEventListener("click", openImagePickerDialog);
+imageSearchInput.addEventListener("input", renderImagePickerList);
+cancelImagePickerButton.addEventListener("click", closeImagePickerDialog);
+imagePickerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  applySelectedImage();
+});
+imagePickerDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeImagePickerDialog();
 });
 
 void initializeTeacherView();

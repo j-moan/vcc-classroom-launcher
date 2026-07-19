@@ -351,6 +351,164 @@ export class ProjectModel {
   // Layout Editing
   // =========================================
 
+  addLayoutEntry(containerId, entry, insertAfterIndex = null) {
+    const container = this.#getContainerReference(containerId);
+
+    if (!container) {
+      throw new ProjectModelError(
+        "CONTAINER_NOT_FOUND",
+        `Container "${containerId}" does not exist.`,
+      );
+    }
+
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+      throw new ProjectModelError("LAYOUT_ENTRY_INVALID", "A layout entry must be an object.");
+    }
+
+    if (typeof entry.type !== "string" || !entry.type.trim()) {
+      throw new ProjectModelError("LAYOUT_ENTRY_TYPE_REQUIRED", "A layout entry must have a type.");
+    }
+
+    if (!Array.isArray(container.layout)) {
+      container.layout = [];
+    }
+
+    const newEntry = structuredClone(entry);
+
+    let entryIndex;
+
+    if (
+      Number.isInteger(insertAfterIndex) &&
+      insertAfterIndex >= 0 &&
+      insertAfterIndex < container.layout.length
+    ) {
+      entryIndex = insertAfterIndex + 1;
+
+      container.layout.splice(entryIndex, 0, newEntry);
+    } else {
+      container.layout.push(newEntry);
+
+      entryIndex = container.layout.length - 1;
+    }
+
+    this.#emit("layoutEntryAdded", {
+      containerId,
+      entryIndex,
+      entry: newEntry,
+    });
+
+    return entryIndex;
+  }
+
+  deleteLayoutEntry(containerId, layoutIndex) {
+    const container = this.#getContainerReference(containerId);
+
+    if (!container) {
+      throw new ProjectModelError(
+        "CONTAINER_NOT_FOUND",
+        `Container "${containerId}" does not exist.`,
+      );
+    }
+
+    if (
+      !Number.isInteger(layoutIndex) ||
+      layoutIndex < 0 ||
+      layoutIndex >= container.layout.length
+    ) {
+      throw new ProjectModelError(
+        "LAYOUT_ENTRY_NOT_FOUND",
+        "The selected layout item does not exist.",
+      );
+    }
+
+    const deletedEntry = container.layout.splice(layoutIndex, 1)[0];
+
+    this.#emit("layoutEntryDeleted", {
+      containerId,
+      layoutIndex,
+      entry: structuredClone(deletedEntry),
+    });
+
+    return deletedEntry;
+  }
+
+  moveLayoutEntry(containerId, fromIndex, toIndex) {
+    const container = this.#getContainerReference(containerId);
+
+    if (!container) {
+      throw new ProjectModelError(
+        "CONTAINER_NOT_FOUND",
+        `Container "${containerId}" does not exist.`,
+      );
+    }
+
+    if (!Array.isArray(container.layout)) {
+      container.layout = [];
+    }
+
+    if (!Number.isInteger(fromIndex) || fromIndex < 0 || fromIndex >= container.layout.length) {
+      throw new ProjectModelError(
+        "LAYOUT_ENTRY_NOT_FOUND",
+        "The selected layout item does not exist.",
+      );
+    }
+
+    if (!Number.isInteger(toIndex) || toIndex < 0 || toIndex >= container.layout.length) {
+      throw new ProjectModelError(
+        "LAYOUT_DESTINATION_INVALID",
+        "The layout item cannot be moved to that position.",
+      );
+    }
+
+    if (fromIndex === toIndex) {
+      return {
+        newIndex: fromIndex,
+        treeChanged: false,
+      };
+    }
+
+    const navigationOrderBefore = container.layout
+      .filter((entry) => entry.type === "navigation")
+      .map((entry) => entry.container);
+
+    const [entry] = container.layout.splice(fromIndex, 1);
+    container.layout.splice(toIndex, 0, entry);
+
+    const navigationOrderAfter = container.layout
+      .filter((layoutEntry) => layoutEntry.type === "navigation")
+      .map((layoutEntry) => layoutEntry.container);
+
+    const treeChanged =
+      navigationOrderBefore.join("\u0000") !== navigationOrderAfter.join("\u0000");
+
+    if (treeChanged) {
+      const existingChildren = Array.isArray(container.children) ? container.children : [];
+
+      const navigationChildIds = navigationOrderAfter.filter((childId) =>
+        existingChildren.includes(childId),
+      );
+
+      const childrenMissingFromLayout = existingChildren.filter(
+        (childId) => !navigationChildIds.includes(childId),
+      );
+
+      container.children = [...navigationChildIds, ...childrenMissingFromLayout];
+    }
+
+    this.#emit("layoutEntryMoved", {
+      containerId,
+      fromIndex,
+      toIndex,
+      entry: structuredClone(entry),
+      treeChanged,
+    });
+
+    return {
+      newIndex: toIndex,
+      treeChanged,
+    };
+  }
+
   // =========================================
   // Serialization and Validation Support
   // =========================================

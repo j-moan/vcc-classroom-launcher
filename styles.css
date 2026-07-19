@@ -679,3 +679,132 @@ body {
 .teacher-layout-row-selected:hover {
   background: #dbe8f8;
 }
+
+/* =========================================================
+   Tile thumbnail editor
+   ========================================================= */
+.tile-thumbnail-editor {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.tile-thumbnail-preview-frame {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border: 1px solid #aeb6bf;
+  border-radius: 10px;
+  background: #f4f4f4;
+}
+
+.tile-thumbnail-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tile-thumbnail-editor .password-input {
+  min-width: 0;
+}
+
+.tile-thumbnail-editor .dialog-button {
+  justify-self: start;
+}
+
+.image-picker-dialog {
+  width: min(760px, calc(100vw - 40px));
+  max-width: 760px;
+  max-height: calc(100vh - 40px);
+  padding: 24px;
+  overflow: hidden;
+}
+
+.image-picker-dialog .password-form {
+  width: 100%;
+  max-width: none;
+}
+
+.image-picker-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 280px;
+  gap: 20px;
+  min-height: 360px;
+  max-height: 60vh;
+}
+
+.image-picker-list-panel,
+.image-picker-preview-panel {
+  min-width: 0;
+}
+
+.image-picker-list {
+  height: 300px;
+  margin-top: 10px;
+  overflow-y: auto;
+  border: 1px solid #aeb6bf;
+  border-radius: 8px;
+  background: white;
+}
+
+.image-picker-preview-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-picker-preview-frame {
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+  border: 1px solid #aeb6bf;
+  border-radius: 10px;
+  background: #f4f4f4;
+}
+
+.image-picker-preview {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.image-picker-file-name {
+  max-width: 250px;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.image-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+}
+
+.image-picker-list-item {
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.image-picker-list-item:hover {
+  background: #eef3f8;
+}
+
+.image-picker-list-item-selected {
+  background: #dbe8f6;
+  font-weight: 700;
+}
+
+.image-picker-empty {
+  margin: 12px;
+  color: #666;
+}

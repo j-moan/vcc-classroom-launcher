@@ -307,17 +307,10 @@ function validateNavigationEntryShape(entry, result, context) {
 }
 
 function validateSectionEntry(entry, result, context) {
-  const hasTitle = typeof entry.title === "string" && entry.title.trim();
+  const hasLabel = typeof entry.label === "string" && entry.label.trim().length > 0;
 
-  const hasDescription = typeof entry.description === "string" && entry.description.trim();
-
-  if (!hasTitle && !hasDescription) {
-    addWarning(
-      result,
-      "EMPTY_SECTION",
-      "A section entry has neither a title nor a description.",
-      context,
-    );
+  if (!hasLabel) {
+    addWarning(result, "EMPTY_SECTION", "A section entry does not have a label.", context);
   }
 }
 

@@ -68,21 +68,27 @@
         </button>
 
         <!-- B4 - Add Section -->
-        <button class="teacher-tool-button" type="button">B4</button>
+        <button id="add-separator-button" class="teacher-tool-button" type="button">
+          Add Separator
+        </button>
 
         <!-- B5 - Add Tile -->
-        <button class="teacher-tool-button" type="button">B5</button>
+        <button id="add-tile-button" class="teacher-tool-button" type="button">Add Tile</button>
 
-        <!-- B6 - Edit Tile -->
-        <button class="teacher-tool-button" type="button">B6</button>
+        <!-- B6 - Delete Tile -->
+        <button id="delete-item-button" class="teacher-tool-button" type="button">
+          Delete Item
+        </button>
 
-        <!-- B7 - Delete Tile -->
-        <button class="teacher-tool-button" type="button">B7</button>
+        <!-- B7 - Move Up -->
+        <button id="move-item-up-button" class="teacher-tool-button" type="button">Move Up</button>
 
-        <!-- B8 - Move Up -->
-        <button class="teacher-tool-button" type="button">B8</button>
+        <!-- B8 - Move Down -->
+        <button id="move-item-down-button" class="teacher-tool-button" type="button">
+          Move Down
+        </button>
 
-        <!-- B9 - Move Down -->
+        <!-- B9 -  -->
         <button class="teacher-tool-button" type="button">B9</button>
 
         <!-- B10 -->
@@ -151,7 +157,180 @@
       </div>
     </dialog>
 
+    <dialog id="add-tile-dialog" class="password-dialog" aria-labelledby="add-tile-title">
+      <form id="add-tile-form" class="password-form" method="dialog">
+        <h2 id="add-tile-title" class="password-title">Add Tile</h2>
+
+        <label for="tile-name-input">Name:</label>
+        <input
+          id="tile-name-input"
+          class="password-input"
+          type="text"
+          autocomplete="off"
+          required
+        />
+
+        <label for="tile-type-select">Type:</label>
+        <select id="tile-type-select" class="password-input">
+          <option value="placeholder">Placeholder</option>
+          <option value="video">Video</option>
+          <option value="website">Website</option>
+          <option value="pdf">PDF</option>
+          <option value="powerpoint">PowerPoint</option>
+          <option value="image">Image</option>
+          <option value="information">Information</option>
+        </select>
+
+        <label for="tile-thumbnail-input">Thumbnail:</label>
+
+        <div class="tile-thumbnail-editor">
+          <div class="tile-thumbnail-preview-frame">
+            <img
+              id="tile-thumbnail-preview"
+              class="tile-thumbnail-preview"
+              src="images/default-page.jpg"
+              alt="Selected tile image"
+            />
+          </div>
+
+          <div>
+            <input
+              id="tile-thumbnail-input"
+              class="password-input"
+              type="text"
+              value="images/default-page.jpg"
+              readonly
+            />
+
+            <button
+              id="change-tile-thumbnail-button"
+              class="dialog-button dialog-button-secondary"
+              type="button"
+            >
+              Change Image
+            </button>
+          </div>
+        </div>
+
+        <div id="tile-destination-group" hidden>
+          <label id="tile-destination-label" for="tile-destination-input"> Destination: </label>
+
+          <input
+            id="tile-destination-input"
+            class="password-input"
+            type="text"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="password-actions">
+          <button
+            id="cancel-add-tile-button"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button class="dialog-button dialog-button-primary" type="submit">Create</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="add-separator-dialog" class="password-dialog" aria-labelledby="add-separator-title">
+      <form id="add-separator-form" class="password-form" method="dialog">
+        <h2 id="add-separator-title" class="password-title">Add Separator</h2>
+
+        <label for="separator-name-input">Name:</label>
+        <input
+          id="separator-name-input"
+          class="password-input"
+          type="text"
+          autocomplete="off"
+          required
+        />
+
+        <div class="password-actions">
+          <button
+            id="cancel-add-separator-button"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button class="dialog-button dialog-button-primary" type="submit">Create</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog
+      id="image-picker-dialog"
+      class="password-dialog image-picker-dialog"
+      aria-labelledby="image-picker-title"
+    >
+      <form id="image-picker-form" class="password-form" method="dialog">
+        <h2 id="image-picker-title" class="password-title">Choose Image</h2>
+
+        <div class="image-picker-layout">
+          <section class="image-picker-list-panel">
+            <label for="image-search-input">Search:</label>
+
+            <input
+              id="image-search-input"
+              class="password-input"
+              type="search"
+              autocomplete="off"
+              placeholder="Type part of the filename"
+            />
+
+            <div
+              id="image-picker-list"
+              class="image-picker-list"
+              role="listbox"
+              aria-label="Available images"
+            ></div>
+          </section>
+
+          <section class="image-picker-preview-panel">
+            <h3>Preview</h3>
+
+            <div class="image-picker-preview-frame">
+              <img
+                id="image-picker-preview"
+                class="image-picker-preview"
+                src="images/default-page.jpg"
+                alt=""
+              />
+            </div>
+
+            <p id="image-picker-file-name" class="image-picker-file-name">No image selected</p>
+          </section>
+        </div>
+
+        <div class="password-actions">
+          <button
+            id="cancel-image-picker-button"
+            class="dialog-button dialog-button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="select-image-button"
+            class="dialog-button dialog-button-primary"
+            type="submit"
+            disabled
+          >
+            Select
+          </button>
+        </div>
+      </form>
+    </dialog>
+
     <script src="data.js"></script>
+    <script src="images/image-catalog.js"></script>
     <script type="module" src="teacher.js"></script>
   </body>
 </html>
