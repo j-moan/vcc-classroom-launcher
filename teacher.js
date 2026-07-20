@@ -1057,6 +1057,30 @@ async function writeCatalogFiles(assetsFolder, catalogs) {
   }
 }
 
+async function catalogAssets() {
+  const assetsFolder = await getAssetsFolder();
+  const catalogs = await buildAssetCatalogs(assetsFolder);
+
+  await writeCatalogFiles(assetsFolder, catalogs);
+
+  return assetsFolder;
+}
+
+async function writeDataFile(assetsFolder, projectData) {
+  const dataFolder = await assetsFolder.getDirectoryHandle("data", {
+    create: true,
+  });
+
+  const dataFileHandle = await dataFolder.getFileHandle("data.js", {
+    create: true,
+  });
+
+  const writable = await dataFileHandle.createWritable();
+
+  await writable.write(createDataFileContents(projectData));
+  await writable.close();
+}
+
 /* =========================================================
    Event Listeners
    ========================================================= */
@@ -1135,23 +1159,19 @@ pdfPickerDialog.addEventListener("cancel", (event) => {
   closePdfPickerDialog();
 });
 publishButton.addEventListener("click", async () => {
-  const zip = new JSZip();
+  try {
+    const assetsFolder = await catalogAssets();
 
-  zip.file("assets/data/data.js", createDataFileContents(project.toObject()));
+    await writeDataFile(assetsFolder, project.toObject());
 
-  const zipBlob = await zip.generateAsync({ type: "blob" });
+    console.log("Publish files updated.");
+  } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
 
-  const downloadUrl = URL.createObjectURL(zipBlob);
-  const downloadLink = document.createElement("a");
-
-  downloadLink.href = downloadUrl;
-  downloadLink.download = "assets.zip";
-
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  downloadLink.remove();
-
-  URL.revokeObjectURL(downloadUrl);
+    console.error("Publish failed.", error);
+  }
 });
 toolbarButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -1164,16 +1184,8 @@ toolbarButtons.forEach((button) => {
 });
 catalogAssetsButton.addEventListener("click", async () => {
   try {
-    const assetsFolder = await getAssetsFolder();
-
-    console.log("Cataloging assets...");
-    const catalogs = await buildAssetCatalogs(assetsFolder);
-    await writeCatalogFiles(assetsFolder, catalogs);
-    console.log(catalogs);
-
-    for (const [folderName, filenames] of Object.entries(catalogs)) {
-      console.log(`${folderName}/catalog.js`, createCatalogFileContents(folderName, filenames));
-    }
+    await catalogAssets();
+    console.log("Asset catalogs updated.");
   } catch (error) {
     if (error.name === "AbortError") {
       return;
